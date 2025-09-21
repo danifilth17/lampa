@@ -48,7 +48,7 @@
         },
         maxsm_themes_tvcaption: {
             ru: "СЕРИАЛ",       
-            en: "TV SERIES",   
+            en: "SERIES",   
             uk: "СЕРІАЛ",    
             be: "СЕРЫЯЛ",     
             zh: "剧集",       
@@ -88,7 +88,7 @@
         // Название плагина
         name: 'maxsm_themes',
         // Версия плагина
-        version: '2.6.0',
+        version: '2.6.1',
         // Настройки по умолчанию
         settings: {
             theme: 'mint_dark'
@@ -250,7 +250,8 @@
         // Стили 
         var forall_style = "\n<style id=\"maxsm_themes_forall\">\n " +
             // По центру в мобилке
-            "@media screen and (max-width: 480px) { .full-start-new__head, .full-start-new__title, .full-start__title-original, .full-start__rate, .full-start-new__reactions, .full-start-new__rate-line, .full-start-new__buttons, .full-start-new__details, .full-start-new__tagline { -webkit-justify-content: center; justify-content: center; text-align: center; max-width: 100%; }}" +
+            "@media screen and (max-width: 480px) { .full-start-new__head, .full-start-new__title, .full-start__title-original, .full-start__rate, .full-start-new__reactions, .full-start-new__rate-line, .full-start-new__buttons, .full-start-new__details, .full-start-new__tagline { -webkit-justify-content: center; justify-content: center; text-align: center; }\n" +
+            ".full-start__title-original {\n   max-width: 100%;\n}\n}" +
             "@media screen and (max-width: 480px) { .full-start-new__right { background: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0))); background: -webkit-linear-gradient(top, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 100%); background: -o-linear-gradient(top, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 100%); background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 100%);}}" +
             // Круглые чек-боксы
             ".selectbox-item__checkbox\n {\nborder-radius: 100%\n}\n" +
@@ -508,7 +509,7 @@
     // Регистрация плагина в манифесте
     Lampa.Manifest.plugins = {
         name: 'maxsm_themes',
-        version: '2.6.0',
+        version: '2.6.1',
         description: 'maxsm_themes'
     };
 
