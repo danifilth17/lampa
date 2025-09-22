@@ -8,6 +8,7 @@
         Lampa.Storage.set('fxapi_uid', unic_id);
     }
 
+    var proxy_url = 'http://apn.cfhttp.top/';
     var api_url = 'http://filmixapp.vip/api/v2/';
     var dev_token = 'user_dev_apk=2.0.1&user_dev_id=' + unic_id + '&user_dev_name=Lampa&user_dev_os=11&user_dev_vendor=FXAPI&user_dev_token=';
     var modalopen = false;
@@ -53,7 +54,7 @@
             ping_auth = setInterval(function() {
                 network.clear();
                 network.timeout(8000);
-                network.silent(Lampa.Utils.addUrlComponent(api_url + 'user_profile', dev_token + user_token), function(json) {
+                network.silent(Lampa.Utils.addUrlComponent(proxy_url + api_url + 'user_profile', dev_token + user_token), function(json) {
                     if (json && json.user_data) {
                         Lampa.Modal.close();
                         clearInterval(ping_auth);
@@ -64,7 +65,7 @@
             }, 4000);
             network.clear();
             network.timeout(8000);
-            network.quiet(Lampa.Utils.addUrlComponent(api_url + 'token_request', dev_token), function(found) {
+            network.quiet(Lampa.Utils.addUrlComponent(proxy_url + api_url + 'token_request', dev_token), function(found) {
                 if (found.status == 'ok') {
                     user_token = found.code;
                     user_code = found.user_code;
@@ -94,7 +95,7 @@
             object = _object;
             var year = parseInt((object.movie.release_date || object.movie.first_air_date || '0000').slice(0, 4));
             var orig = object.movie.original_name || object.movie.original_title;
-            var url = Lampa.Utils.addUrlComponent(api_url + 'search', 'story=' + encodeURIComponent(query));
+            var url = Lampa.Utils.addUrlComponent(proxy_url + api_url + 'search', 'story=' + encodeURIComponent(query));
             url = Lampa.Utils.addUrlComponent(url, dev_token + fxapi_token);
             network.clear();
             network.silent(url, function(json) {
@@ -119,7 +120,7 @@
         };
 
         this.find = function(filmix_id) {
-            var url = api_url;
+            var url = proxy_url + api_url;
 
             end_search(filmix_id);
 
@@ -718,4 +719,158 @@
 
         this.watched = function(set) {
             var file_id = Lampa.Utils.hash(object.movie.number_of_seasons ? object.movie.original_name : object.movie.original_title);
-            var watched = Lampa.Storage.cache('online_
+            var watched = Lampa.Storage.cache('online_watched_last', 5000, {});
+
+            if (set) {
+                if (!watched[file_id]) watched[file_id] = {};
+                Lampa.Arrays.extend(watched[file_id], set, true);
+                Lampa.Storage.set('online_watched_last', watched);
+            } else {
+                return watched[file_id];
+            }
+        };
+
+        this.draw = function(items) {
+            var _this5 = this;
+
+            var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+            if (!items.length) return this.empty();
+            this.getEpisodes(items[0].season, function(episodes) {
+                var viewed = Lampa.Storage.cache('online_view', 5000, []);
+                var serial = object.movie.name ? true : false;
+
+                var choice = _this5.getChoice();
+
+                var fully = window.innerWidth > 480;
+                var scroll_to_element = false;
+                var scroll_to_mark = false;
+                items.forEach(function(element, index) {
+                    var episode = serial && episodes.length && !params.similars ? episodes.find(function(e) {
+                        return e.episode_number == element.episode;
+                    }) : false;
+                    var episode_num = element.episode || index + 1;
+                    var episode_last = choice.episodes_view[element.season];
+                    Lampa.Arrays.extend(element, {
+                        info: '',
+                        quality: '',
+                        time: Lampa.Utils.secondsToTime((episode ? episode.runtime : object.movie.runtime) * 60, true)
+                    });
+                    var hash_timeline = Lampa.Utils.hash(element.season ? [element.season, element.episode, object.movie.original_title].join('') : object.movie.original_title);
+                    var hash_behold = Lampa.Utils.hash(element.season ? [element.season, element.episode, object.movie.original_title, element.voice_name].join('') : object.movie.original_title + element.voice_name);
+                    var data = {
+                        hash_timeline: hash_timeline,
+                        hash_behold: hash_behold
+                    };
+                    var info = [];
+
+                    if (element.season) {
+                        element.translate_episode_end = _this5.getLastEpisode(items);
+                        element.translate_voice = element.voice_name;
+                    }
+
+                    element.timeline = Lampa.Timeline.view(hash_timeline);
+
+                    if (episode) {
+                        element.title = episode.name;
+                        if (element.info.length < 30 && episode.vote_average) info.push(Lampa.Template.get('online_prestige_rate', {
+                            rate: parseFloat(episode.vote_average + '').toFixed(1)
+                        }, true));
+                        if (episode.air_date && fully) info.push(Lampa.Utils.parseTime(episode.air_date).full);
+                    } else if (object.movie.release_date && fully) {
+                        info.push(Lampa.Utils.parseTime(object.movie.release_date).full);
+                    }
+
+                    if (!serial && object.movie.tagline && element.info.length < 30) info.push(object.movie.tagline);
+                    if (element.info) info.push(element.info);
+                    if (info.length) element.info = info.map(function(i) {
+                        return '<span>' + i + '</span>';
+                    }).join('<span class="online-prestige-split">●</span>');
+                    var html = Lampa.Template.get('online_prestige_full', element);
+                    var loader = html.find('.online-prestige__loader');
+                    var image = html.find('.online-prestige__img');
+
+                    if (!serial) {
+                        if (choice.movie_view == hash_behold) scroll_to_element = html;
+                    } else if (typeof episode_last !== 'undefined' && episode_last == episode_num) {
+                        scroll_to_element = html;
+                    }
+
+                    if (serial && !episode) {
+                        image.append('<div class="online-prestige__episode-number">' + ('0' + (element.episode || index + 1)).slice(-2) + '</div>');
+                        loader.remove();
+                    } else {
+                        var img = html.find('img')[0];
+
+                        img.onerror = function() {
+                            img.src = './img/img_broken.svg';
+                        };
+
+                        img.onload = function() {
+                            image.addClass('online-prestige__img--loaded');
+                            loader.remove();
+                            if (serial) image.append('<div class="online-prestige__episode-number">' + ('0' + (element.episode || index + 1)).slice(-2) + '</div>');
+                        };
+
+                        img.src = Lampa.TMDB.image('t/p/w300' + (episode ? episode.still_path : object.movie.backdrop_path));
+                        images.push(img);
+                    }
+
+                    html.find('.online-prestige__timeline').append(Lampa.Timeline.render(element.timeline));
+
+                    if (viewed.indexOf(hash_behold) !== -1) {
+                        scroll_to_mark = html;
+                        html.find('.online-prestige__img').append('<div class="online-prestige__viewed">' + Lampa.Template.get('icon_viewed', {}, true) + '</div>');
+                    }
+
+                    element.mark = function() {
+                        viewed = Lampa.Storage.cache('online_view', 5000, []);
+
+                        if (viewed.indexOf(hash_behold) == -1) {
+                            viewed.push(hash_behold);
+                            Lampa.Storage.set('online_view', viewed);
+
+                            if (html.find('.online-prestige__viewed').length == 0) {
+                                html.find('.online-prestige__img').append('<div class="online-prestige__viewed">' + Lampa.Template.get('icon_viewed', {}, true) + '</div>');
+                            }
+                        }
+
+                        choice = _this5.getChoice();
+
+                        if (!serial) {
+                            choice.movie_view = hash_behold;
+                        } else {
+                            choice.episodes_view[element.season] = episode_num;
+                        }
+
+                        _this5.saveChoice(choice);
+
+                        _this5.watched({
+                            balanser: balanser,
+                            balanser_name: Lampa.Utils.capitalizeFirstLetter(balanser),
+                            voice_id: choice.voice_id,
+                            voice_name: choice.voice_name || element.voice_name,
+                            episode: element.episode,
+                            season: element.season
+                        });
+                    };
+
+                    element.unmark = function() {
+                        viewed = Lampa.Storage.cache('online_view', 5000, []);
+
+                        if (viewed.indexOf(hash_behold) !== -1) {
+                            Lampa.Arrays.remove(viewed, hash_behold);
+                            Lampa.Storage.set('online_view', viewed);
+                            if (Lampa.Manifest.app_digital >= 177) Lampa.Storage.remove('online_view', hash_behold);
+                            html.find('.online-prestige__viewed').remove();
+                        }
+                    };
+
+                    element.timeclear = function() {
+                        element.timeline.percent = 0;
+                        element.timeline.time = 0;
+                        element.timeline.duration = 0;
+                        Lampa.Timeline.update(element.timeline);
+                    };
+
+                    html.on('hover:enter', function() {
+                        if (object.movie.id) Lampa.Favorite.add('history', object.movie, 1
