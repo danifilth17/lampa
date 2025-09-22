@@ -9,7 +9,7 @@
     }
     
     var proxy_url = 'http://cors.cfhttp.top/';
-    var api_url = 'http://filmixapp.cyou/api/v2/';
+    var api_url = 'https://api.filmix.tv/api/v2/';
     var dev_token = 'user_dev_apk=2.0.1&user_dev_id=' + unic_id + '&user_dev_name=Lampa&user_dev_os=11&user_dev_vendor=FXAPI&user_dev_token=';
     var modalopen = false;
     var ping_auth;
