@@ -4,9 +4,9 @@
 // ===================== LQE_CONFIG =====================
     var LQE_CONFIG = {
         CACHE_VERSION: 2,
-        LOGGING_GENERAL: true,
+        LOGGING_GENERAL: false,
         LOGGING_QUALITY: true,
-        LOGGING_CARDLIST: true,
+        LOGGING_CARDLIST: false,
         CACHE_VALID_TIME_MS: 24 * 60 * 60 * 1000, // 24 години
         CACHE_REFRESH_THRESHOLD_MS: 12 * 60 * 60 * 1000, // 12 годин для фонового оновлення
         CACHE_KEY: 'lampa_quality_cache',
