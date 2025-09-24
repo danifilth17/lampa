@@ -179,7 +179,7 @@ var styleLQE = "<style id=\"lampa_quality_styles\">" +
     ".card__quality {" +
     " position: absolute; " +
     " bottom: 0.50em; " +
-    " left: 0; " +
+    " left: 0,5; " +
     " background-color: " + (LQE_CONFIG.LIST_CARD_LABEL_BACKGROUND_TRANSPARENT ? "transparent" : LQE_CONFIG.LIST_CARD_LABEL_BACKGROUND_COLOR) + " !important;" +
     " z-index: 10;" +
     " width: fit-content; " +
