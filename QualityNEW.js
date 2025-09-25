@@ -11,7 +11,7 @@
         CACHE_REFRESH_THRESHOLD_MS: 12 * 60 * 60 * 1000, // 12 годин для фонового оновлення
         CACHE_KEY: 'lampa_quality_cache',
         JACRED_PROTOCOL: 'https://',
-        JACRED_URL: 'jacred.pro',
+        JACRED_URL: 'jacred.xyz',
         JACRED_API_KEY: '',
         PROXY_LIST: [
             'http://api.allorigins.win/raw?url=',
