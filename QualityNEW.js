@@ -21,7 +21,6 @@
         SHOW_QUALITY_FOR_TV_SERIES: true,
         MAX_PARALLEL_REQUESTS: 12, // Lite-черга: регульоване число паралельних пошуків (10-15 рекомендовано)
         FULL_CARD_LABEL_BORDER_COLOR: '#8D3DA1',
-        FULL_CARD_LABEL__BACKGROUND_COLOR: 'rgba(61, 161, 141, 0.8)',
         FULL_CARD_LABEL_TEXT_COLOR: '#8D3DA1',
         FULL_CARD_LABEL_FONT_WEIGHT: 'bold',
         FULL_CARD_LABEL_FONT_SIZE: '1.2em',
