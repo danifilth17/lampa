@@ -275,7 +275,7 @@
               // На маленьких экранах обрезаем, на больших полностью
             ".card__marker > span {\n max-width: min(12em, 95%);\n}\n" +
               // отметка качества background: rgba(0, 0, 0, 0.6);\n  
-            ".card__quality {\n  position: absolute;\n  left: auto;\n right: 0em;\n  bottom: 2.4em;\n  padding: 0.4em 0.6em;\n  color: #fff;\n font-weight: 700;\n  font-size: 1.0em;\n  -webkit-border-radius: 0.5em 0 0 0.5em;\n  -moz-border-radius: 0.5em 0 0 0.5em;\n  border-radius: 0.5em 0 0 0.5em;\n  text-transform: uppercase;\n}\n" +
+            ".card__quality {\n  position: absolute;\n  left: auto;\n right: 0em;\n  bottom: 2.4em;\n  padding: 0.4em 0.6em;\n  color: #ecf01d;\n font-weight: 700;\n  font-size: 1.0em;\n  -webkit-border-radius: 0.5em 0 0 0.5em;\n  -moz-border-radius: 0.5em 0 0 0.5em;\n  border-radius: 0.5em 0 0 0.5em;\n  text-transform: uppercase;\n}\n" +
             // Уменьшаем расстояние между рядами только для карточках в списках
             ".items-line.items-line--type-cards + .items-line.items-line--type-cards  {\nmargin-top: 1em;\n}\n" +
             // Так же широкие карты фиксим, чтобы не было отскока нижнего ряда, делаем отступ снизу
@@ -515,4 +515,5 @@
 
     // Экспортируем объект плагина для внешнего доступа
     window.maxsm_themes = maxsm_themes;
+
 })();
