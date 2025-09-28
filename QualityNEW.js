@@ -22,6 +22,7 @@
         MAX_PARALLEL_REQUESTS: 10, // Lite-черга: регульоване число паралельних пошуків (10-15 рекомендовано)
         FULL_CARD_LABEL_BORDER_COLOR: '#8D3DA1',
         FULL_CARD_LABEL_BACKGROUND_COLOR: 'rgba(132, 27, 208, 0.8)',
+        FULL_CARD_LABEL_BACKGROUND_TRANSPARENT: false,
         FULL_CARD_LABEL_TEXT_COLOR: '#8D3DA1',
         FULL_CARD_LABEL_FONT_WEIGHT: 'bold',
         FULL_CARD_LABEL_FONT_SIZE: '1.2em',
@@ -166,6 +167,7 @@ var styleLQE = "<style id=\"lampa_quality_styles\">" +
     "font-weight: " + LQE_CONFIG.FULL_CARD_LABEL_FONT_WEIGHT + " !important;" +
     "font-size: " + LQE_CONFIG.FULL_CARD_LABEL_FONT_SIZE + " !important;" +
     "font-style: " + LQE_CONFIG.FULL_CARD_LABEL_FONT_STYLE + " !important;" +
+    " background-color: " + (LQE_CONFIG.FULL_CARD_LABEL_BACKGROUND_TRANSPARENT ? "transparent" : LQE_CONFIG.FULL_CARD_LABEL_BACKGROUND_COLOR) + " !important;" +
     "border-radius: 0.2em;" +
     "padding: 0.3em;" +
     "height: 1.72em;" +
