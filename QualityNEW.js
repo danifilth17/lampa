@@ -12,7 +12,7 @@
         CACHE_KEY: 'lampa_quality_cache',
         JACRED_PROTOCOL: 'https://',
         JACRED_URL: 'jacred.viewbox.dev',
-        JACRED_API_KEY: '',
+        JACRED_API_KEY: 'viewbox',
         PROXY_LIST: [
             'http://api.allorigins.win/raw?url=',
             'http://cors.bwa.workers.dev/'
