@@ -1,2 +1,2 @@
 # lampadani
-Lampa plagin
+Lampa plugin
