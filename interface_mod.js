@@ -305,7 +305,7 @@
         var style = $(`<style id="movie_type_styles">
             .content-label { position: absolute!important; top: 1.4em!important; left: -0.8em!important; color: white!important; padding: 0.4em 0.4em!important; border-radius: 0.3em!important; font-size: 0.8em!important; z-index: 10!important; }
             .serial-label { background-color: #3da18d!important; }
-            .movie-label  { background-color: #8D3DA1!important; }
+            .movie-label  { background-color: #7e7ed9!important; }
             body[data-movie-labels="on"] .card--tv .card__type { display: none!important; }
         </style>`);
         $('head').append(style);
