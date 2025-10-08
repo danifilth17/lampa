@@ -27,6 +27,8 @@
         FULL_CARD_LABEL_BORDER_COLOR: '#6c3979',
         FULL_CARD_LABEL_TEXT_COLOR: '#FFFFFF',
         FULL_CARD_LABEL_FONT_WEIGHT: 'normal',
+		FULL_CARD_LABEL_BACKGROUND_COLOR: '#8D3DA1',
+        FULL_CARD_LABEL_BACKGROUND_TRANSPARENT: false,
         FULL_CARD_LABEL_FONT_SIZE: '1.2em',
         FULL_CARD_LABEL_FONT_STYLE: 'normal',
         
@@ -179,6 +181,7 @@
         "font-weight: " + LQE_CONFIG.FULL_CARD_LABEL_FONT_WEIGHT + " !important;" + // Товщина шрифту
         "font-size: " + LQE_CONFIG.FULL_CARD_LABEL_FONT_SIZE + " !important;" + // Розмір шрифту
         "font-style: " + LQE_CONFIG.FULL_CARD_LABEL_FONT_STYLE + " !important;" + // Стиль шрифту
+		" background-color: " + (LQE_CONFIG.FULL_CARD_LABEL_BACKGROUND_TRANSPARENT ? "transparent" : LQE_CONFIG.FULL_CARD_LABEL_BACKGROUND_COLOR) + " !important;" +
         "border-radius: 0.2em;" + // Закруглення кутів
         "padding: 0.3em;" + // Внутрішні відступи
         "height: 1.72em;" + // Фіксована висота
