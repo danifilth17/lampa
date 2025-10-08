@@ -24,7 +24,7 @@
         USE_SIMPLE_QUALITY_LABELS: true, // ✅ Використовувати спрощені мітки якості (4K, FHD, TS, TC тощо) "true" - так /  "false" - ні
         
         // Стилі для відображення якості на повній картці
-        FULL_CARD_LABEL_BORDER_COLOR: '#FFFFFF',
+        FULL_CARD_LABEL_BORDER_COLOR: '#6c3979',
         FULL_CARD_LABEL_TEXT_COLOR: '#FFFFFF',
         FULL_CARD_LABEL_FONT_WEIGHT: 'normal',
         FULL_CARD_LABEL_FONT_SIZE: '1.2em',
