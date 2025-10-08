@@ -370,7 +370,7 @@
                     
                     if (isComplete) {
                         // ДЛЯ ЗАВЕРШЕНИХ СЕЗОНІВ: "S1 ✓" (зелена мітка)
-                        content = `S${progressInfo.seasonNumber}`;
+                        content = `S${progressInfo.seasonNumber} ✓`;
                     } else {
                         // ДЛЯ НЕЗАВЕРШЕНИХ СЕЗОНІВ: "S1 5/10" (жовта мітка з прогресом)
                         content = `S${progressInfo.seasonNumber} ${progressInfo.airedEpisodes}/${progressInfo.totalEpisodes}`;
