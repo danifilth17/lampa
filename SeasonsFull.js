@@ -11,8 +11,8 @@
 
     // === НАЛАШТУВАННЯ ПЛАГІНА ===
     var CONFIG = {
-        tmdbApiKey: 'a7801c446c0d6aca4ee6d4ed62db86ad',  			  // API ключ для доступу до TMDB
-        cacheTime: 24 * 60 * 60 * 1000,                   // Час зберігання кешу (24 години)
+        tmdbApiKey: '1ad1fd4b4938e876aa6c96d0cded9395',   // API ключ для доступу до TMDB
+        cacheTime: 12 * 60 * 60 * 1000,                   // Час зберігання кешу (12 години)
         enabled: true,                                    // Активувати/деактивувати плагін
         language: 'uk'                                    // Мова для запитів до TMDB
     };
@@ -24,12 +24,13 @@
     .card--season-complete {
         position: absolute;
         left: 0;
+        margin-left: -0.68em; //ВІДСТУП за лівий край 
         bottom: 0.50em;
-        background-color: rgba(61, 161, 141, 0.8);  /* Зелений колір */
+        background-color: rgba(61, 161, 141, 0.9);  /* Зелений колір, стандартна прозорість фону 0.8 (1 - фон не прозорий) */
         z-index: 12;
         width: fit-content;
         max-width: calc(100% - 1em);
-        border-radius: 0 0.8em 0.8em 0em;
+        border-radius: 0.3em 0.3em 0.3em 0.3em;
         overflow: hidden;
         opacity: 0;
         transition: opacity 0.22s ease-in-out;
@@ -39,12 +40,13 @@
     .card--season-progress {
         position: absolute;
         left: 0;
+        margin-left: -0.68em; //ВІДСТУП за лівий край 
         bottom: 0.50em;
-        background-color: rgba(255, 193, 7, 0.8);   /* Жовтий колір */
+        background-color: rgba(255, 193, 7, 0.9);   /* Жовтий колір, стандартна прозорість фону 0.8 (1 - фон не прозорий)*/
         z-index: 12;
         width: fit-content;
         max-width: calc(100% - 1em);
-        border-radius: 0 0.8em 0.8em 0em;
+        border-radius: 0.3em 0.3em 0.3em 0.3em;
         overflow: hidden;
         opacity: 0;
         transition: opacity 0.22s ease-in-out;
@@ -54,14 +56,14 @@
     .card--season-complete div,
     .card--season-progress div {
         text-transform: uppercase;
-        font-family: 'Roboto Condensed', 'Arial Narrow', Arial, sans-serif;  /* Той самий шрифт */
-        font-weight: 700;                                                    /* Той самий жирний шрифт */
-        font-size: 1.05em;                                                   /* Той самий розмір */
-        padding: 0.3em 0.4em;                                                /* Той самий відступ */
-        white-space: nowrap;                                                 /* Той самий перенос */
-        display: flex;                                                       /* Той самий flex */
-        align-items: center;                                                 /* Той самий вирівнювання */
-        gap: 4px;                                                            /* Той самий проміжок */
+        font-family: 'Roboto Condensed', 'Arial Narrow', Arial, sans-serif;  
+        font-weight: 700;                                                    /* жирний шрифт */
+        font-size: 1.0 em;                                                   /* розмір */
+        padding: 0.3em 0.4em;                                                /* відступ */
+        white-space: nowrap;                                                 /* перенос */
+        display: flex;                                                       /* flex */
+        align-items: center;                                                 /* вирівнювання */
+        gap: 4px;                                                            /* проміжок */
         text-shadow: 0.5px 0.5px 1px rgba(0,0,0,0.3);
     }
     
@@ -368,7 +370,7 @@
                     
                     if (isComplete) {
                         // ДЛЯ ЗАВЕРШЕНИХ СЕЗОНІВ: "S1 ✓" (зелена мітка)
-                        content = `S${progressInfo.seasonNumber} ✓`;
+                        content = `S${progressInfo.seasonNumber}`;
                     } else {
                         // ДЛЯ НЕЗАВЕРШЕНИХ СЕЗОНІВ: "S1 5/10" (жовта мітка з прогресом)
                         content = `S${progressInfo.seasonNumber} ${progressInfo.airedEpisodes}/${progressInfo.totalEpisodes}`;
