@@ -11,7 +11,7 @@
 
     // === НАЛАШТУВАННЯ ПЛАГІНА ===
     var CONFIG = {
-        tmdbApiKey: '1ad1fd4b4938e876aa6c96d0cded9395',   // API ключ для доступу до TMDB
+        tmdbApiKey: 'a7801c446c0d6aca4ee6d4ed62db86ad',   // API ключ для доступу до TMDB
         cacheTime: 12 * 60 * 60 * 1000,                   // Час зберігання кешу (12 години)
         enabled: true,                                    // Активувати/деактивувати плагін
         language: 'uk'                                    // Мова для запитів до TMDB
