@@ -2,18 +2,18 @@
     setTimeout(function() {
         const clearBtnId = 'CLEARCACHE';
 
-        // ß£ß⁄ß’ß—ß›ß÷ßﬂßﬂßÒ ?ß„ßﬂßÂßßÈß‡? ß‹ßﬂß‡ß·ß‹ß⁄
+        // –í–∏–¥–∞–ª–µ–Ω–Ω—è —ñ—Å–Ω—É—é—á–æ—ó –∫–Ω–æ–ø–∫–∏
         $('#' + clearBtnId).remove();
 
-        // ß•ß‡ß’ß—ß”ß—ßﬂßﬂßÒ CSS
+        // –î–æ–¥–∞–≤–∞–Ω–Ω—è CSS
         if (!document.getElementById('clearcache-style')) {
             const css = `
-                /* ßØß‡ß”ß⁄ß€ ß„ß‰ß⁄ß›ßÓ ß’ß›ßÒ ß‹ßﬂß‡ß·ß‹ß⁄ ß≥ß‰ß‚?ßÈß‹ß— */
+                /* –ù–æ–≤–∏–π —Å—Ç–∏–ª—å –¥–ª—è –∫–Ω–æ–ø–∫–∏ –°—Ç—Ä—ñ—á–∫–∞ */
                 .head__action.selector.open--feed svg path {
                     fill: #2196F3 !important;
                 }
                 
-                /* ß≤ß÷ßÍß‰ß— ß”ß—ßÍß‡ß‘ß‡ ß‡ß‚ß⁄ß‘?ßﬂß—ß›ßÓßﬂß‡ß‘ß‡ CSS */
+                /* –†–µ—à—Ç–∞ –≤–∞—à–æ–≥–æ –æ—Ä–∏–≥—ñ–Ω–∞–ª—å–Ω–æ–≥–æ CSS */
                 #${clearBtnId} svg path {
                     fill: lime !important;
                     transition: fill 0.2s ease;
@@ -75,7 +75,7 @@
             document.head.appendChild(style);
         }
 
-        // ß•ß‡ß’ß—ß”ß—ßﬂßﬂßÒ ß‹ßﬂß‡ß·ß‹ß⁄ ß‡ßÈß⁄ßÎß÷ßﬂßﬂßÒ ß‹ß÷ßÍßÂ
+        // –î–æ–¥–∞–≤–∞–Ω–Ω—è –∫–Ω–æ–ø–∫–∏ –æ—á–∏—â–µ–Ω–Ω—è –∫–µ—à—É
         $('.head__actions').append(`
             <div id="${clearBtnId}" class="head__action selector m-clear-cache">
                 <svg width="24" height="24" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
@@ -86,7 +86,7 @@
             </div>
         `);
 
-        // ß∞ß‚ß⁄ß‘?ßﬂß—ß›ßÓßﬂß⁄ß€ ß‡ß“ß‚ß‡ß“ßﬂß⁄ß‹ ß’ß›ßÒ TV (ß·ß‡ß”ß÷ß‚ß‰ß—?ßﬁß‡ ß„ß‰ß—ß‚ßÂ ß›ß‡ß‘?ß‹ßÂ)
+        // –û—Ä–∏–≥—ñ–Ω–∞–ª—å–Ω–∏–π –æ–±—Ä–æ–±–Ω–∏–∫ –¥–ª—è TV (–ø–æ–≤–µ—Ä—Ç–∞—î–º–æ —Å—Ç–∞—Ä—É –ª–æ–≥—ñ–∫—É)
         $('#' + clearBtnId).on('hover:enter hover:click hover:touch', function() {
             try {
                 $(this).addClass('loading');
@@ -94,7 +94,7 @@
                 if (Lampa && Lampa.Cache && typeof Lampa.Cache.clear === 'function') {
                     Lampa.Cache.clear();
                     setTimeout(() => {
-                        alert('?? ß¨ß÷ßÍ Lampa ß‡ßÈß⁄ßÎß÷ßﬂß‡');
+                        alert('üóë –ö–µ—à Lampa –æ—á–∏—â–µ–Ω–æ');
                         $(this).removeClass('loading');
                         setTimeout(() => location.reload(), 300);
                     }, 800);
@@ -116,18 +116,18 @@
                             localStorage.removeItem(key);
                             removed++;
                         });
-                        alert(`?? ß≠ß‡ß‹ß—ß›ßÓßﬂß⁄ß€ ß‹ß÷ßÍ ß‡ßÈß⁄ßÎß÷ßﬂß‡: ${removed} ß‹ß›ßßÈ?ß”`);
+                        alert(`üóë –õ–æ–∫–∞–ª—å–Ω–∏–π –∫–µ—à –æ—á–∏—â–µ–Ω–æ: ${removed} –∫–ª—é—á—ñ–≤`);
                         $(this).removeClass('loading');
                         setTimeout(() => location.reload(), 300);
                     }, 800);
                 }
             } catch (e) {
-                console.error('ß±ß‡ßﬁß⁄ß›ß‹ß— ß‡ßÈß⁄ßÎß÷ßﬂßﬂßÒ ß‹ß÷ßÍßÂ:', e);
+                console.error('–ü–æ–º–∏–ª–∫–∞ –æ—á–∏—â–µ–Ω–Ω—è –∫–µ—à—É:', e);
                 $('#' + clearBtnId).removeClass('loading');
             }
         });
 
-        // ß∞ßﬂß‡ß”ß›ß÷ßﬂßﬂßÒ ß‹ßﬂß‡ß·ß‡ß‹
+        // –û–Ω–æ–≤–ª–µ–Ω–Ω—è –∫–Ω–æ–ø–æ–∫
         function updateButtons() {
             $('.full-start__button.view--torrent svg').replaceWith(`
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="50px" height="50px">
@@ -148,19 +148,19 @@
             `);
         }
 
-        // ?ßﬂ?ßË?ß—ß›?ßŸß—ßË?ßÒ
+        // –Ü–Ω—ñ—Ü—ñ–∞–ª—ñ–∑–∞—Ü—ñ—è
         updateButtons();
         if (Lampa && Lampa.Listener) {
             Lampa.Listener.follow('full', updateButtons);
         }
 
-        // ß≤ß÷?ß„ß‰ß‚ß—ßË?ßÒ ß·ß›ß—ß‘?ßﬂß—
+        // –†–µ—î—Å—Ç—Ä–∞—Ü—ñ—è –ø–ª–∞–≥—ñ–Ω–∞
         window.plugin && window.plugin('clear_cache_plugin', {
             type: 'component',
-            name: 'ß∞ß·ß‰ß⁄ß›?ßŸß‡ß”ß—ßﬂ? ß‹ßﬂß‡ß·ß‹ß⁄ + ß‡ßÈß⁄ß„ß‰ß‹ß— ß‹ß÷ßÍßÂ',
+            name: '–û–ø—Ç–∏–ª—ñ–∑–æ–≤–∞–Ω—ñ –∫–Ω–æ–ø–∫–∏ + –æ—á–∏—Å—Ç–∫–∞ –∫–µ—à—É',
             version: '2.3.1',
             author: 'Oleksandr',
-            description: 'ß∂?ß‹ß„ ß’ß›ßÒ TV + ß„ß‰ß—ßﬂß’ß—ß‚ß‰ßﬂ? ß—ßﬂ?ßﬁß—ßË?? + ß„ß⁄ßﬂßÒ ß‹ßﬂß‡ß·ß‹ß— ß≥ß‰ß‚?ßÈß‹ß—'
+            description: '–§—ñ–∫—Å –¥–ª—è TV + —Å—Ç–∞–Ω–¥–∞—Ä—Ç–Ω—ñ –∞–Ω—ñ–º–∞—Ü—ñ—ó + —Å–∏–Ω—è –∫–Ω–æ–ø–∫–∞ –°—Ç—Ä—ñ—á–∫–∞'
         });
 
     }, 1000);
