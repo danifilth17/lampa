@@ -176,10 +176,10 @@
 `
 
     var cssRulesColor = `
-.torrent-filter .simple-button--filter:nth-last-child(4) {border-color: red;}
-.torrent-filter .simple-button--filter:nth-last-child(3) {border-color: green;}
-.torrent-filter .simple-button--filter:nth-last-child(2) {border-color: yellow;}
-.torrent-filter .simple-button--filter:nth-last-child(1) {border-color: blue;}
+.torrent-filter .simple-button--filter:nth-last-child(4) {border-color: '#7e7ed9';}
+.torrent-filter .simple-button--filter:nth-last-child(3) {border-color: '#7e7ed9';}
+.torrent-filter .simple-button--filter:nth-last-child(2) {border-color: '#7e7ed9';}
+.torrent-filter .simple-button--filter:nth-last-child(1) {border-color: '#7e7ed9';}
 `
 
     var html = _html.replace(new RegExp('{build}', 'g'), (Lampa.Storage.get('apx_customButton', {}) == 'component') ? _html_component : _html_home);
@@ -338,4 +338,5 @@
     plugTvKeys.start();
     //Lampa.Keypad.listener.follow('keyup', function(e){Lampa.Noty.show('[key: ' + e.event.key + '] [keyCode: ' + e.event.keyCode + '] [code: ' + e.event.code + ']');console.log(e)})
     log('Listeners started');
+
 })();
