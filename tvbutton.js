@@ -176,10 +176,10 @@
 `
 
     var cssRulesColor = `
-.torrent-filter .simple-button--filter:nth-last-child(4) {border-color: '#7e7ed9';}
-.torrent-filter .simple-button--filter:nth-last-child(3) {border-color: '#7e7ed9';}
-.torrent-filter .simple-button--filter:nth-last-child(2) {border-color: '#7e7ed9';}
-.torrent-filter .simple-button--filter:nth-last-child(1) {border-color: '#7e7ed9';}
+.torrent-filter .simple-button--filter:nth-last-child(4) {border-color: rgba(126,126,217);}
+.torrent-filter .simple-button--filter:nth-last-child(3) {border-color: rgba(126,126,217);}
+.torrent-filter .simple-button--filter:nth-last-child(2) {border-color: rgba(126,126,217);}
+.torrent-filter .simple-button--filter:nth-last-child(1) {border-color: rgba(126,126,217);}
 `
 
     var html = _html.replace(new RegExp('{build}', 'g'), (Lampa.Storage.get('apx_customButton', {}) == 'component') ? _html_component : _html_home);
@@ -340,3 +340,4 @@
     log('Listeners started');
 
 })();
+
