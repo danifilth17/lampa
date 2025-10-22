@@ -152,7 +152,6 @@
 	display: flex !important;
 	flex: 1 1 0px;
 	border-style: double;
-	background-color: rgba(126,126,217);
 	border-width: 2px;
 	font-size: 1.2em;
 	-webkit-border-radius: 0.7em;
@@ -341,6 +340,7 @@
     log('Listeners started');
 
 })();
+
 
 
 
