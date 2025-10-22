@@ -152,7 +152,7 @@
 	display: flex !important;
 	flex: 1 1 0px;
 	border-style: double;
-	border-width: 2px;
+	border-width: 1px;
 	font-size: 1.2em;
 	-webkit-border-radius: 0.7em;
 	-moz-border-radius: 0.7em;
@@ -340,6 +340,7 @@
     log('Listeners started');
 
 })();
+
 
 
 
