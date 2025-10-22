@@ -152,7 +152,7 @@
 	display: flex !important;
 	flex: 1 1 0px;
 	border-style: solid;
-	border-width: thin;
+	border-width: 8px;
 	font-size: 1.2em;
 	-webkit-border-radius: 0.7em;
 	-moz-border-radius: 0.7em;
@@ -340,4 +340,5 @@
     log('Listeners started');
 
 })();
+
 
