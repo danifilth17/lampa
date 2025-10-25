@@ -322,8 +322,7 @@
                     if (result.rating > 0) {
                         let html = `${result.rating} ${label}`;
                         if (result.medianReaction) {
-                            let reactionSrc = 'https://cub.rip/img/reactions/' + result.medianReaction + '.svg';
-                            html += ' <img style="width:1em;height:1em;margin:0 0.2em;" src="' + reactionSrc + '">';
+                            
                         }
                         ratingElement.innerHTML = html;
                     } else {
