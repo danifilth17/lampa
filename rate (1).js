@@ -300,8 +300,7 @@
                     if (result.rating > 0) {
                         let html = `${result.rating}`;
                         if (result.medianReaction) {
-                            let reactionSrc = 'https://cubnotrip.top/img/reactions/' + result.medianReaction + '.svg';
-                            html += ` <img style="width:1em;height:1em;margin:0 0.2em;" src="${reactionSrc}">`;
+                            
                         }
                         ratingElement.innerHTML = html;
                     } else {
@@ -479,8 +478,7 @@
                             if (result.rating !== null && result.rating > 0) {
                                 $(render).find('.rate--lampa .rate-value').text(result.rating);
                                 if (result.medianReaction) {
-                                    let reactionSrc = 'https://cubnotrip.top/img/reactions/' + result.medianReaction + '.svg';
-                                    $(render).find('.rate--lampa .rate-icon').html('<img style="width:1em;height:1em;margin:0 0.2em;" src="' + reactionSrc + '">');
+                                    
                                 }
                             } else {
                                 $(render).find('.rate--lampa').hide();
