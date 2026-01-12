@@ -17,9 +17,9 @@
             'http://api.allorigins.win/raw?url=',
             'http://cors.bwa.workers.dev/'
         ],
-        PROXY_TIMEOUT_MS: 4000, // Таймаут для проксі запитів (4 секунди)
-        SHOW_QUALITY_FOR_TV_SERIES: true, // ✅ Показувати якість для серіалів
-        MAX_PARALLEL_REQUESTS: 12, // Максимальна кількість паралельних запитів
+        PROXY_TIMEOUT_MS: 5000, // Таймаут для проксі запитів (4 секунди)
+        SHOW_QUALITY_FOR_TV_SERIES: false, // ✅ Показувати якість для серіалів
+        MAX_PARALLEL_REQUESTS: 5, // Максимальна кількість паралельних запитів
         
         USE_SIMPLE_QUALITY_LABELS: true, // ✅ Використовувати спрощені мітки якості (4K, FHD, TS, TC тощо) "true" - так /  "false" - ні
         
