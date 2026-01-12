@@ -10,9 +10,9 @@
         CACHE_VALID_TIME_MS: 24 * 60 * 60 * 1000, // Час життя кешу (24 години)
         CACHE_REFRESH_THRESHOLD_MS: 12 * 60 * 60 * 1000, // Час для фонового оновлення кешу (12 годин)
         CACHE_KEY: 'lampa_quality_cache', // Ключ для зберігання кешу в LocalStorage
-        JACRED_PROTOCOL: 'http://', // Протокол для API JacRed
-        JACRED_URL: 'jac-red.ru', // Домен API JacRed
-        JACRED_API_KEY: '', // Ключ API (не використовується в даній версії)
+        JACRED_PROTOCOL: 'https://', // Протокол для API JacRed
+        JACRED_URL: 'jac.maxvol.pro', // Домен API JacRed
+        JACRED_API_KEY: '1', // Ключ API (не використовується в даній версії)
         PROXY_LIST: [ // Список проксі серверів для обходу CORS обмежень
             'http://api.allorigins.win/raw?url=',
             'http://cors.bwa.workers.dev/'
