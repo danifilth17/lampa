@@ -1,46 +1,44 @@
 (function () {
     'use strict';
 
-    function QualityOnlyP() {
-        this.init = function () {
-            // Оставляем только регистрацию параметра качества
-            Lampa.Settings.listener.follow('open', function (e) {
-                if (e.name == 'general' || e.name == 'more') {
-                    // Можно добавить специфичные действия при открытии
-                }
-            });
+    function QualityPlugin() {
+        this.name = 'Quality Only';
 
+        this.init = function () {
+            // Добавляем настройку сразу после готовности приложения
             this.addSettings();
         };
 
         this.addSettings = function () {
-            // Описание только категории качества
-            var quality_item = {
-                title: 'Качество видео (P-Store)',
-                description: 'Укажите приоритетное разрешение для поиска потоков',
+            var item = {
+                title: 'Качество видео',
+                description: 'Выберите качество, которое будет отображаться первым',
                 type: 'select',
                 name: 'p_store_quality_default',
                 values: {
-                    '2160': '4K (2160p)',
-                    '1080': 'Full HD (1080p)',
-                    '720': 'HD (720p)',
-                    '480': 'SD (480p)',
-                    '0': 'Любое доступное'
+                    '2160': '4K',
+                    '1080': '1080p',
+                    '720': '720p',
+                    '480': '480p',
+                    '0': 'Любое'
                 },
                 default: '1080'
             };
 
-            // Добавляем в массив настроек Lampa
-            Lampa.Settings.items().push(quality_item);
+            // Безопасное добавление в настройки Lampa
+            if (window.Lampa && Lampa.Settings) {
+                Lampa.Settings.items().push(item);
+            }
         };
     }
 
-    // Инициализация без лишних вызовов меню
-    if (window.appready) {
-        new QualityOnlyP().init();
+    // Запуск через глобальный объект Lampa, чтобы избежать Script Error
+    if (window.Lampa) {
+        new QualityPlugin().init();
     } else {
-        Lampa.Object.listener.follow('app', function (e) {
-            if (e.type == 'ready') new QualityOnlyP().init();
+        // Если Lampa еще не загружена, вешаем слушатель
+        document.addEventListener('app:ready', function() {
+            new QualityPlugin().init();
         });
     }
 })();
