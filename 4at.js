@@ -1,18 +1,13 @@
 (function () {
     'use strict';
 
-    function QualityPlugin() {
-        this.name = 'Quality Only';
-
+    // Создаем структуру, которую Lampa ожидает увидеть
+    var p_quality = function () {
         this.init = function () {
-            // Добавляем настройку сразу после готовности приложения
-            this.addSettings();
-        };
-
-        this.addSettings = function () {
-            var item = {
+            // Добавляем только настройку качества
+            Lampa.Settings.items().push({
                 title: 'Качество видео',
-                description: 'Выберите качество, которое будет отображаться первым',
+                description: 'Выберите качество видео по умолчанию',
                 type: 'select',
                 name: 'p_store_quality_default',
                 values: {
@@ -23,22 +18,15 @@
                     '0': 'Любое'
                 },
                 default: '1080'
-            };
-
-            // Безопасное добавление в настройки Lampa
-            if (window.Lampa && Lampa.Settings) {
-                Lampa.Settings.items().push(item);
-            }
+            });
         };
-    }
+    };
 
-    // Запуск через глобальный объект Lampa, чтобы избежать Script Error
-    if (window.Lampa) {
-        new QualityPlugin().init();
-    } else {
-        // Если Lampa еще не загружена, вешаем слушатель
-        document.addEventListener('app:ready', function() {
-            new QualityPlugin().init();
-        });
+    // Запуск
+    try {
+        var plugin = new p_quality();
+        plugin.init();
+    } catch (e) {
+        console.log('Plugin Error:', e);
     }
 })();
