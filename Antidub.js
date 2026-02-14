@@ -1,75 +1,76 @@
 (function () {
-    Lampa.Listener.follow('full', function (e) {
-        if (e.type == 'start' || e.type == 'render') {
-            var render = e.object.render();
-            var data = e.data || {};
+    function init() {
+        Lampa.Listener.follow('full', function (e) {
+            // Реагируем только на открытие или перерисовку карточки
+            if (e.type == 'start' || e.type == 'render') {
+                
+                // Ждем мизерную задержку, чтобы Lampa успела построить свой DOM
+                setTimeout(function() {
+                    var render = e.object.render();
+                    
+                    // 1. ПРОВЕРКА НА ДУБЛИКАТ (по ID объекта, чтобы привязаться к фильму)
+                    var cardId = e.data ? (e.data.id || e.data.title) : 'unknown';
+                    if (render.find('.hkr-ready').attr('data-id') == cardId) {
+                        return; 
+                    }
 
-            // 1. ПРЕДОХРАНИТЕЛЬ: если плашки уже есть, ничего не делаем
-            if (render.find('.hkr-custom-tags').length > 0) return;
+                    // 2. ЧИСТКА: если в этой карточке висят старые или чужие плашки — удаляем
+                    render.find('.hkr-ready').remove();
+                    render.find('.full-start__details').hide(); // Скрываем стандарт
 
-            // 2. Скрываем стандартную невзрачную строку метаданных
-            render.find('.full-start__details').hide();
+                    // 3. СБОР ДАННЫХ
+                    var data = e.data || {};
+                    var tags = [];
 
-            // 3. ПОДГОТОВКА ДАННЫХ
-            var items = [];
+                    // Плашка серий
+                    if (data.number_of_episodes) {
+                        tags.push({t: data.number_of_episodes + ' Сер.', c: '#27ae60'});
+                    }
 
-            // Количество серий (только для сериалов)
-            if (data.number_of_episodes) {
-                items.push({
-                    text: data.number_of_episodes + ' Серий',
-                    color: '#27ae60' // Зеленый
-                });
-            }
+                    // Плашка времени
+                    var runtime = data.runtime || (data.last_episode_to_air && data.last_episode_to_air.runtime);
+                    if (runtime) {
+                        tags.push({t: Lampa.Utils.secondsToTime(runtime * 60), c: '#2980b9'});
+                    }
 
-            // Длительность (конвертируем минуты в читаемый вид)
-            if (data.runtime || (data.last_episode_to_air && data.last_episode_to_air.runtime)) {
-                var rt = data.runtime || data.last_episode_to_air.runtime;
-                var time = Lampa.Utils.secondsToTime(rt * 60);
-                items.push({
-                    text: 'Длительность ≈ ' + time,
-                    color: '#2980b9' // Синий
-                });
-            }
+                    // Плашки жанров
+                    if (data.genres) {
+                        data.genres.slice(0, 2).forEach(function(g) {
+                            tags.push({t: g.name, c: 'rgba(255,255,255,0.15)'});
+                        });
+                    }
 
-            // Жанры (берем первые три для компактности)
-            if (data.genres && data.genres.length) {
-                data.genres.slice(0, 3).forEach(function(g) {
-                    items.push({
-                        text: g.name,
-                        color: 'rgba(255,255,255,0.1)' // Полупрозрачный серый
+                    // 4. СОЗДАНИЕ КОНТЕЙНЕРА
+                    var container = $('<div class="hkr-ready"></div>');
+                    container.attr('data-id', cardId); // Метка, чтобы не дублировать
+                    
+                    container.css({
+                        display: 'flex',
+                        gap: '6px',
+                        marginTop: '12px',
+                        flexWrap: 'wrap'
                     });
-                });
+
+                    // 5. НАПОЛНЕНИЕ
+                    tags.forEach(function(tag) {
+                        var htmlTag = $('<div style="background:'+tag.c+'; padding:4px 10px; border-radius:4px; font-size:13px; font-weight:bold; color:#fff;">'+tag.t+'</div>');
+                        container.append(htmlTag);
+                    });
+
+                    // 6. ВСТАВКА
+                    // Пытаемся вставить после кнопок. Если кнопок нет — в начало описания.
+                    var target = render.find('.full-start__buttons');
+                    if (target.length > 0) {
+                        target.after(container);
+                    } else {
+                        render.find('.full-start__info').prepend(container);
+                    }
+                }, 10);
             }
+        });
+    }
 
-            // 4. СБОРКА HTML
-            var container = $('<div class="hkr-custom-tags"></div>');
-            
-            // Стили контейнера
-            container.css({
-                display: 'flex',
-                'flex-wrap': 'wrap',
-                gap: '8px',
-                'margin-top': '15px',
-                'margin-bottom': '10px'
-            });
-
-            items.forEach(function(item) {
-                var tag = $('<div class="hkr-tag">' + item.text + '</div>');
-                tag.css({
-                    background: item.color,
-                    padding: '5px 12px',
-                    'border-radius': '6px',
-                    'font-size': '14px',
-                    'font-weight': '500',
-                    'color': '#fff',
-                    'white-space': 'nowrap'
-                });
-                container.append(tag);
-            });
-
-            // 5. ВСТАВКА В ИНТЕРФЕЙС
-            // Вставляем сразу после блока с кнопками "Смотреть", "Трейлер" и т.д.
-            render.find('.full-start__buttons').after(container);
-        }
-    });
+    // Запуск плагина после готовности Lampa
+    if (window.appready) init();
+    else Lampa.Listener.follow('app', function (e) { if (e.type == 'ready') init(); });
 })();
