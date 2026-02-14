@@ -1,28 +1,24 @@
 (function () {
     'use strict';
 
-    function hideElements() {
+    function hideTargetElements() {
         var style = document.createElement('style');
         style.innerHTML = `
-            /* 1. Скрываем время по ID */
+            /* Скрываем само время по его ID */
             #averageRuntime, 
-            /* Скрываем точку-разделитель после времени */
+            /* Скрываем точку-разделитель, которая идет сразу после него */
             #averageRuntime + span,
-            #averageRuntime + .full-start__tag--dot,
-
-            /* 2. Скрываем контейнер с логотипами студий */
-            .studio-logos-container {
+            #averageRuntime + .full-start__tag--dot {
                 display: none !important;
             }
         `;
         document.head.appendChild(style);
     }
 
-    // Запуск плагина
-    if (window.appready) hideElements();
+    if (window.appready) hideTargetElements();
     else {
         Lampa.Listener.follow('app', function (e) {
-            if (e.type == 'ready') hideElements();
+            if (e.type == 'ready') hideTargetElements();
         });
     }
 })();
