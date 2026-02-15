@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name         Movie Details Badges (Dot-Split)
-// @version      10.0
+// @name         Lampa Movie Badges (Precise Dot Split)
+// @version      11.0
 // @match        *://*/*
 // @grant        none
 // ==/UserScript==
@@ -8,7 +8,7 @@
 (function() {
     'use strict';
 
-    // 1. Стилизация баблов
+    // 1. Добавляем стили для баблов
     const style = document.createElement('style');
     style.innerHTML = `
         .full-start-new__details {
@@ -32,64 +32,69 @@
             white-space: nowrap !important;
         }
 
-        /* Длительность и Качество — Синие */
+        /* Синий цвет для Длительности и Качества */
         .badge-main-blue { background-color: #2b78b5 !important; }
         
-        /* Разделитель строк (чтобы жанры ушли вниз) */
-        .badge-break { flex-basis: 100% !important; height: 0 !important; margin: 0 !important; }
+        /* Принудительный перенос строки после первого блока (длительности) */
+        .badge-line-break {
+            flex-basis: 100% !important;
+            height: 0 !important;
+            margin: 0 !important;
+        }
 
-        /* Цвета для остальных элементов */
+        /* Цвета для Жанров и Стран */
         .bg-green { background-color: #1e7d43 !important; }
         .bg-red   { background-color: #a0352a !important; }
         .bg-blue-dark { background-color: #2b618f !important; }
     `;
     document.head.appendChild(style);
 
-    function applyStyling() {
+    function buildBadges() {
         const container = document.querySelector('.full-start-new__details');
-        // Если контейнера нет или он уже содержит наши баблы — выходим
+        
+        // Если контейнера нет или мы уже создали баблы — ничего не делаем
         if (!container || container.querySelector('.custom-badge')) return;
 
-        // Берем текст, который подготовил твой мод (с точками-разделителями)
+        // Берем текст, который сформировал твой interface_mod_new.js
         let rawText = container.innerText.trim();
         if (!rawText || rawText.length < 5) return;
 
-        // 1. Разбиваем строго по точкам: ' · ' или '.'
-        // Твой мод вставляет ' · ', используем это как главный ориентир
-        let items = rawText.split(/[·•]/).map(item => item.trim()).filter(i => i.length > 0);
+        // РАЗДЕЛЕНИЕ: Режем строго по символу ' · ' (middle dot)
+        // Это гарантирует, что "США" или "1080p" не разделятся внутри
+        let items = rawText.split('·').map(item => item.trim()).filter(i => i.length > 0);
 
         container.innerHTML = ''; 
-        let genreCounter = 0;
+        let genreIdx = 0;
         const colors = ['bg-green', 'bg-red', 'bg-blue-dark'];
 
         items.forEach((text, index) => {
             const span = document.createElement('span');
             span.className = 'custom-badge';
-            // Очищаем от случайных точек в конце, если они остались
+            // Чистим текст от случайных точек в конце слов
             span.textContent = text.replace(/[.]+$/, '');
 
-            // ЛОГИКА РАСКРАСКИ:
-            // Первые два элемента (обычно Длительность и Качество) — синие
-            // Или если в тексте есть маркеры качества
-            if (index === 0 || /(HD|4K|1080p|720p|WEB|HDR|BDRip)/i.test(text)) {
+            // ЛОГИКА ЦВЕТА И ПОЗИЦИИ:
+            // 1. Первый элемент (Длительность) или элементы с Качеством (HD, 4K) — синие
+            if (index === 0 || /(HD|4K|720p|1080p|WEB|HDR|TS)/i.test(text)) {
                 span.classList.add('badge-main-blue');
                 container.appendChild(span);
 
-                // После первого элемента (длительности) делаем перенос строки
+                // После первого элемента (Длительность) всегда делаем разрыв строки
                 if (index === 0) {
                     const br = document.createElement('div');
-                    br.className = 'badge-break';
+                    br.className = 'badge-line-break';
                     container.appendChild(br);
                 }
             } else {
-                // Все остальное (страны, жанры) — в три цвета по очереди
-                span.classList.add(colors[genreCounter % 3]);
+                // 2. Все остальные элементы (Страны, Жанры) — цветные по очереди
+                span.classList.add(colors[genreIdx % 3]);
                 container.appendChild(span);
-                genreCounter++;
+                genreIdx++;
             }
         });
     }
 
-    // Проверяем каждые полсекунды (чтобы сработать после setTimeout в твоем моде)
-    setInterval(applyStyling, 500);
+    // Проверяем наличие блока каждые 500мс
+    // Это нужно, так как твой мод работает с задержкой 300мс
+    setInterval(buildBadges, 500);
 })();
