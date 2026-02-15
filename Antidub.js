@@ -1,8 +1,6 @@
 // ==UserScript==
-// @name         Movie Details Badges Styler
-// @version      1.0
-// @description  Стилизация длительности и жанров в красивые плашки
-// @author       Gemini
+// @name         Movie Details Badges Styler v2
+// @version      2.0
 // @match        *://*/*
 // @grant        none
 // ==/UserScript==
@@ -10,104 +8,104 @@
 (function() {
     'use strict';
 
-    // 1. Стили (Цвета точно как на твоем скриншоте)
     const style = document.createElement('style');
     style.innerHTML = `
         .full-start-new__details {
             display: flex !important;
             flex-wrap: wrap !important;
             gap: 8px !important;
-            margin-top: 10px !important;
-            color: transparent !important; /* Прячем исходный текст, если он не успел удалиться */
+            background: none !important;
+            border: none !important;
+            padding: 10px 0 !important;
         }
 
         .custom-badge {
             display: inline-flex !important;
             align-items: center !important;
-            padding: 5px 12px !important;
-            border-radius: 6px !important;
-            color: white !important;
-            font-size: 15px !important;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
-            font-weight: 500 !important;
-            line-height: 1.2 !important;
-            text-transform: capitalize;
+            padding: 6px 14px !important;
+            border-radius: 8px !important;
+            color: #ffffff !important;
+            font-size: 16px !important;
+            font-family: system-ui, -apple-system, sans-serif !important;
+            font-weight: 400 !important;
+            white-space: nowrap !important;
         }
 
-        /* Синяя плашка для длительности (на всю строку) */
+        /* Длительность - синий, на всю ширину */
         .badge-duration { 
             background-color: #2b78b5 !important; 
-            width: 100%; 
-            margin-bottom: 5px;
+            flex: 0 1 auto !important;
+            width: fit-content !important;
+            display: block !important;
+            margin-bottom: 4px !important;
         }
 
-        /* Цвета для жанров */
-        .badge-genre-green { background-color: #1e7d43 !important; }
-        .badge-genre-red   { background-color: #a0352a !important; }
-        .badge-genre-blue  { background-color: #2b618f !important; }
+        /* Принудительный разрыв после длительности */
+        .badge-duration::after {
+            content: "";
+            display: block;
+            width: 100vw;
+            height: 0;
+        }
+
+        /* Цвета жанров */
+        .bg-green { background-color: #1e7d43 !important; }
+        .bg-red   { background-color: #a0352a !important; }
+        .bg-blue  { background-color: #2b618f !important; }
     `;
     document.head.appendChild(style);
 
-    // 2. Вспомогательная функция очистки (как в твоем исходнике)
-    function cleanText(str) {
-        return str.replace(/[.,]/g, '').trim();
-    }
-
-    // 3. Основная логика трансформации
     function applyStyling(container) {
-        if (!container || container.getAttribute('data-styled') === 'true') return;
+        if (!container || container.dataset.styled === 'true') return;
 
-        const originalText = container.innerText;
-        // Разбиваем по запятой или точке с запятой
-        const items = originalText.split(/[,;]/).map(item => item.trim()).filter(item => item.length > 0);
-        
-        container.innerHTML = ''; // Очищаем контейнер
+        // Берем текст, игнорируя лишние пробелы (логика очистки из твоего файла)
+        const content = container.innerText.trim();
+        if (!content) return;
+
+        // Разбиваем по запятой
+        const items = content.split(',').map(item => item.trim());
+        container.innerHTML = ''; 
 
         items.forEach((text, index) => {
+            if (!text) return;
+            
             const span = document.createElement('span');
             span.textContent = text;
             span.className = 'custom-badge';
 
-            // Логика распределения цветов
             if (text.toLowerCase().includes('час') || text.toLowerCase().includes('мин')) {
                 span.classList.add('badge-duration');
+                // Добавляем невидимый элемент-разделитель, чтобы жанры ушли на след. строку
+                container.appendChild(span);
+                const br = document.createElement('div');
+                br.style.flexBasis = '100%';
+                br.style.height = '0';
+                container.appendChild(br);
             } else {
-                // Циклически меняем цвета для жанров: зеленый, красный, синий
-                const genreIndex = index % 3; 
-                if (genreIndex === 1) span.classList.add('badge-genre-green');
-                else if (genreIndex === 2) span.classList.add('badge-genre-red');
-                else span.classList.add('badge-genre-blue');
+                // Раскраска жанров по порядку
+                const genreColors = ['bg-green', 'bg-red', 'bg-blue'];
+                const colorClass = genreColors[(index - 1) % genreColors.length] || 'bg-blue';
+                span.classList.add(colorClass);
+                container.appendChild(span);
             }
-
-            container.appendChild(span);
         });
 
-        container.setAttribute('data-styled', 'true');
+        container.dataset.styled = 'true';
     }
 
-    // 4. MutationObserver (следит за появлением элемента, как в твоем interface_mod_new.js)
+    // MutationObserver для динамических страниц (как в твоем оригинале)
     const observer = new MutationObserver((mutations) => {
-        for (let mutation of mutations) {
-            for (let node of mutation.addedNodes) {
-                if (!(node instanceof HTMLElement)) continue;
-
-                if (node.classList.contains('full-start-new__details')) {
-                    applyStyling(node);
+        mutations.forEach(mutation => {
+            mutation.addedNodes.forEach(node => {
+                if (node.nodeType === 1) {
+                    if (node.classList.contains('full-start-new__details')) applyStyling(node);
+                    const child = node.querySelector('.full-start-new__details');
+                    if (child) applyStyling(child);
                 }
-                
-                // Проверка дочерних элементов
-                const child = node.querySelector('.full-start-new__details');
-                if (child) applyStyling(child);
-            }
-        }
+            });
+        });
     });
 
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
-
-    // Первичный запуск
+    observer.observe(document.body, { childList: true, subtree: true });
     document.querySelectorAll('.full-start-new__details').forEach(applyStyling);
-
 })();
