@@ -1,65 +1,72 @@
 (function () {
     "use strict";
 
-    function LampaHKRInterface() {
+    function initHKR() {
         Lampa.Listener.follow('full', function (e) {
-            if (e.type === 'start') {
-                var render = e.object.render();
-                var data = e.data;
+            // Реагируем на открытие карточки
+            if (e.type === 'start' || e.type === 'render') {
+                
+                // Ждем подольше (300мс), чтобы интерфейс Lampa точно загрузился
+                setTimeout(function () {
+                    var render = e.object.render();
+                    var data = e.data;
 
-                // 1. Сразу находим и скрываем стандартную "невзрачную" строку
-                var details = render.find('.full-start__details');
-                details.css('display', 'none');
+                    if (!data) return;
 
-                // 2. Собираем данные для плашек
-                var tags = [];
+                    // 1. Ищем куда вставлять. В Lampa это обычно .full-start__buttons или .full-start__info
+                    var target = render.find('.full-start__buttons');
+                    if (target.length === 0) target = render.find('.full-start__info');
 
-                // Количество серий (Зеленая плашка)
-                if (data && data.number_of_episodes) {
-                    tags.push({ text: data.number_of_episodes + ' Серий', color: '#27ae60' });
-                }
+                    // Если цель не найдена — выходим
+                    if (target.length === 0) return;
 
-                // Длительность (Синяя плашка)
-                var runtime = (data && data.runtime) || (data && data.last_episode_to_air && data.last_episode_to_air.runtime);
-                if (runtime) {
-                    var h = Math.floor(runtime / 60);
-                    var m = runtime % 60;
-                    var timeStr = (h > 0 ? h + ' ч. ' : '') + m + ' мин.';
-                    tags.push({ text: 'Длительность ≈ ' + timeStr, color: '#2980b9' });
-                }
+                    // 2. Проверка на дубликаты (чтобы не плодить плашки)
+                    if (render.find('.hkr-plugs-container').length > 0) return;
 
-                // Жанры (Темные плашки)
-                if (data && data.genres) {
-                    data.genres.slice(0, 3).forEach(function (g) {
-                        tags.push({ text: g.name, color: 'rgba(255,255,255,0.15)' });
+                    // 3. Скрываем стандартную невзрачную строку
+                    render.find('.full-start__details').css('display', 'none');
+
+                    // 4. Формируем массив данных
+                    var tags = [];
+
+                    // Серии
+                    if (data.number_of_episodes) {
+                        tags.push({ text: data.number_of_episodes + ' Серий', color: '#27ae60' });
+                    }
+
+                    // Время
+                    var runtime = data.runtime || (data.last_episode_to_air && data.last_episode_to_air.runtime) || 0;
+                    if (runtime > 0) {
+                        var h = Math.floor(runtime / 60);
+                        var m = runtime % 60;
+                        var tStr = (h > 0 ? h + ' ч. ' : '') + m + ' мин.';
+                        tags.push({ text: 'Длительность ≈ ' + tStr, color: '#2980b9' });
+                    }
+
+                    // Жанры (макс 3)
+                    if (data.genres && data.genres.length > 0) {
+                        data.genres.slice(0, 3).forEach(function(g) {
+                            tags.push({ text: g.name, color: 'rgba(255,255,255,0.15)' });
+                        });
+                    }
+
+                    // 5. Генерируем HTML
+                    var html = $('<div class="hkr-plugs-container" style="display: flex; flex-wrap: wrap; gap: 8px; margin: 15px 0; width: 100%;"></div>');
+
+                    tags.forEach(function (tag) {
+                        var item = $('<div style="background: ' + tag.color + '; padding: 5px 12px; border-radius: 6px; font-size: 14px; font-weight: bold; color: #fff; white-space: nowrap;">' + tag.text + '</div>');
+                        html.append(item);
                     });
-                }
 
-                // 3. Формируем HTML
-                var html = '<div class="hkr-interface-container" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; margin-bottom: 10px;">';
-                
-                for (var i = 0; i < tags.length; i++) {
-                    html += '<div style="background: ' + tags[i].color + '; padding: 5px 12px; border-radius: 6px; font-size: 14px; font-weight: bold; color: #fff; white-space: nowrap;">' + tags[i].text + '</div>';
-                }
-                
-                html += '</div>';
+                    // 6. ВСТАВКА
+                    target.after(html);
 
-                // 4. БЕЗОПАСНАЯ ВСТАВКА
-                // Сначала удаляем наш старый контейнер (если он вдруг уже был создан при перерисовке)
-                render.find('.hkr-interface-container').remove();
-                
-                // Вставляем после кнопок управления
-                render.find('.full-start__buttons').after(html);
+                }, 300); 
             }
         });
     }
 
-    // Запуск плагина только после полной готовности Lampa
-    if (window.appready) {
-        LampaHKRInterface();
-    } else {
-        Lampa.Listener.follow('app', function (e) {
-            if (e.type === 'ready') LampaHKRInterface();
-        });
-    }
+    // Запуск
+    if (window.appready) initHKR();
+    else Lampa.Listener.follow('app', function (e) { if (e.type === 'ready') initHKR(); });
 })();
