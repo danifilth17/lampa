@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name         Movie Details Badges Styler v2
-// @version      2.0
+// @name         Movie Details Badges Styler v3
+// @version      3.0
 // @match        *://*/*
 // @grant        none
 // ==/UserScript==
@@ -13,39 +13,36 @@
         .full-start-new__details {
             display: flex !important;
             flex-wrap: wrap !important;
-            gap: 8px !important;
+            gap: 10px !important;
             background: none !important;
-            border: none !important;
             padding: 10px 0 !important;
+            height: auto !important;
+            align-items: flex-start !important;
         }
 
         .custom-badge {
             display: inline-flex !important;
-            align-items: center !important;
-            padding: 6px 14px !important;
-            border-radius: 8px !important;
+            padding: 6px 15px !important;
+            border-radius: 6px !important;
             color: #ffffff !important;
-            font-size: 16px !important;
-            font-family: system-ui, -apple-system, sans-serif !important;
-            font-weight: 400 !important;
+            font-size: 15px !important;
+            font-family: sans-serif !important;
+            font-weight: 500 !important;
             white-space: nowrap !important;
+            line-height: 1 !important;
         }
 
-        /* Длительность - синий, на всю ширину */
+        /* Синяя плашка времени */
         .badge-duration { 
             background-color: #2b78b5 !important; 
-            flex: 0 1 auto !important;
-            width: fit-content !important;
-            display: block !important;
-            margin-bottom: 4px !important;
+            margin-bottom: 5px !important;
         }
 
-        /* Принудительный разрыв после длительности */
-        .badge-duration::after {
-            content: "";
-            display: block;
-            width: 100vw;
-            height: 0;
+        /* Разделитель для переноса жанров на новую строку */
+        .line-break {
+            flex-basis: 100% !important;
+            height: 0 !important;
+            margin: 0 !important;
         }
 
         /* Цвета жанров */
@@ -58,44 +55,46 @@
     function applyStyling(container) {
         if (!container || container.dataset.styled === 'true') return;
 
-        // Берем текст, игнорируя лишние пробелы (логика очистки из твоего файла)
-        const content = container.innerText.trim();
-        if (!content) return;
+        // Берем чистый текст из контейнера
+        const rawContent = container.innerText.trim();
+        if (!rawContent) return;
 
-        // Разбиваем по запятой
-        const items = content.split(',').map(item => item.trim());
+        // Разделяем: либо по запятой, либо по пробелу перед заглавной буквой (если запятых нет)
+        let items = rawContent.includes(',') 
+            ? rawContent.split(',') 
+            : rawContent.split(/(?=[А-ЯA-Z])/); // Разбивка, если жанры слиплись
+
         container.innerHTML = ''; 
 
-        items.forEach((text, index) => {
-            if (!text) return;
-            
+        let genreCounter = 0;
+
+        items.map(item => item.trim()).filter(i => i.length > 1).forEach((text) => {
             const span = document.createElement('span');
-            span.textContent = text;
+            span.textContent = text.replace(/[.,]/g, ''); // Чистим от точек
             span.className = 'custom-badge';
 
             if (text.toLowerCase().includes('час') || text.toLowerCase().includes('мин')) {
                 span.classList.add('badge-duration');
-                // Добавляем невидимый элемент-разделитель, чтобы жанры ушли на след. строку
                 container.appendChild(span);
+                
+                // Создаем принудительный перенос строки после времени
                 const br = document.createElement('div');
-                br.style.flexBasis = '100%';
-                br.style.height = '0';
+                br.className = 'line-break';
                 container.appendChild(br);
             } else {
-                // Раскраска жанров по порядку
                 const genreColors = ['bg-green', 'bg-red', 'bg-blue'];
-                const colorClass = genreColors[(index - 1) % genreColors.length] || 'bg-blue';
-                span.classList.add(colorClass);
+                span.classList.add(genreColors[genreCounter % 3]);
                 container.appendChild(span);
+                genreCounter++;
             }
         });
 
         container.dataset.styled = 'true';
     }
 
-    // MutationObserver для динамических страниц (как в твоем оригинале)
+    // Используем MutationObserver как в твоем исходном коде
     const observer = new MutationObserver((mutations) => {
-        mutations.forEach(mutation => {
+        for (const mutation of mutations) {
             mutation.addedNodes.forEach(node => {
                 if (node.nodeType === 1) {
                     if (node.classList.contains('full-start-new__details')) applyStyling(node);
@@ -103,7 +102,7 @@
                     if (child) applyStyling(child);
                 }
             });
-        });
+        }
     });
 
     observer.observe(document.body, { childList: true, subtree: true });
