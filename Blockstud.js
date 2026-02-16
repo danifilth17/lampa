@@ -1,32 +1,42 @@
 (function () {
     'use strict';
 
-    // 1. Сразу выставляем флаг, на случай если тот плагин еще не запустился
-    window.plugin_studios_master_ready = true;
-
-    // 2. Перехватываем добавление компонентов
-    var originalAddComponent = Lampa.Component.add;
-    Lampa.Component.add = function (name, comp) {
-        if (name === 'studios_main' || name === 'studios_view') {
-            console.log('BLOCKER: Заблокирована регистрация компонента:', name);
-            return; // Не даем плагину зарегистрироваться
-        }
-        originalAddComponent.apply(this, arguments);
-    };
-
-    // 3. Агрессивное удаление кнопок из меню
-    // Тот плагин использует setInterval(..., 3000), мы будем чистить меню быстрее
-    setInterval(function() {
-        $('.menu .menu__list .menu__item[data-sid]').each(function() {
-            var sid = $(this).attr('data-sid');
-            // Список ID из твоего файла
-            var blockedSids = ['netflix', 'apple', 'hbo', 'amazon', 'disney', 'hulu', 'paramount', 'syfy', 'educational_and_reality'];
+    // Слушаем события приложения Lampa
+    Lampa.Listener.follow('app', function (e) {
+        // Когда карточка фильма полностью загружена и отрисована
+        if (e.type === 'ready' || e.type === 'complite') {
             
-            if (blockedSids.indexOf(sid) !== -1) {
-                $(this).remove();
-                // console.log('BLOCKER: Кнопка ' + sid + ' удалена');
+            // Даем небольшую задержку (200-500мс), чтобы интерфейс успел "устаканиться"
+            setTimeout(function() {
+                // Ищем кнопку онлайн в футере карточки
+                var onlineBtn = $('.full-start__buttons .selector.button--online, .full-start__buttons [data-action="online"]');
+                
+                if (onlineBtn.length) {
+                    // 1. Принудительно переводим фокус на кнопку
+                    Lampa.Controller.focus(onlineBtn[0]);
+                    
+                    // 2. Визуально подсвечиваем, что мы выбрали её
+                    $('.selector').removeClass('focus');
+                    onlineBtn.addClass('focus');
+                    
+                    console.log('Auto-Focus: Кнопка Онлайн выбрана автоматически');
+                }
+            }, 400); 
+        }
+    });
+
+    // Дополнительная проверка: если кнопка не нажимается из-за "залипшего" фокуса
+    // Сделаем так, чтобы при первом нажатии на "ОК" (enter) вызывался именно онлайн
+    var originalEnter = Lampa.Controller.enter;
+    Lampa.Controller.enter = function() {
+        var current = Lampa.Controller.enabled().name;
+        if (current === 'full_start') {
+            var onlineBtn = $('.full-start__buttons .selector.focus.button--online');
+            if (onlineBtn.length) {
+                // Если мы уже на кнопке онлайн, просто даем ей сработать
             }
-        });
-    }, 500); // Проверяем каждые полсекунды, чтобы кнопка даже не успела моргнуть
+        }
+        originalEnter.apply(this, arguments);
+    };
 
 })();
