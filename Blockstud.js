@@ -1,17 +1,32 @@
 (function () {
     'use strict';
 
-    // 1. Блокируем запуск по флагу готовности
-    // Основной плагин увидит, что true, и решит, что он уже запущен
+    // 1. Сразу выставляем флаг, на случай если тот плагин еще не запустился
     window.plugin_studios_master_ready = true;
 
-    // 2. Создаем «заглушки», чтобы если Lampa попытается вызвать компоненты, не было ошибки
-    if (!window.Lampa) return;
+    // 2. Перехватываем добавление компонентов
+    var originalAddComponent = Lampa.Component.add;
+    Lampa.Component.add = function (name, comp) {
+        if (name === 'studios_main' || name === 'studios_view') {
+            console.log('BLOCKER: Заблокирована регистрация компонента:', name);
+            return; // Не даем плагину зарегистрироваться
+        }
+        originalAddComponent.apply(this, arguments);
+    };
 
-    // Если какой-то другой скрипт захочет вызвать эти компоненты, 
-    // они просто ничего не будут делать (пустые функции)
-    Lampa.Component.add('studios_main', function(){});
-    Lampa.Component.add('studios_view', function(){});
+    // 3. Агрессивное удаление кнопок из меню
+    // Тот плагин использует setInterval(..., 3000), мы будем чистить меню быстрее
+    setInterval(function() {
+        $('.menu .menu__list .menu__item[data-sid]').each(function() {
+            var sid = $(this).attr('data-sid');
+            // Список ID из твоего файла
+            var blockedSids = ['netflix', 'apple', 'hbo', 'amazon', 'disney', 'hulu', 'paramount', 'syfy', 'educational_and_reality'];
+            
+            if (blockedSids.indexOf(sid) !== -1) {
+                $(this).remove();
+                // console.log('BLOCKER: Кнопка ' + sid + ' удалена');
+            }
+        });
+    }, 500); // Проверяем каждые полсекунды, чтобы кнопка даже не успела моргнуть
 
-    console.log('Studios Master has been isolated and blocked.');
 })();
