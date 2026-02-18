@@ -2,51 +2,62 @@
     'use strict';
 
     var style = `
-        <style id="lampa-white-logos">
-            /* Силовое переопределение контейнера */
-            .studio-logos-container > div, 
+        <style id="lampa-extreme-white">
+            /* Находим конкретно те элементы, которые мы видели на скриншотах кода */
+            .studio-logos-container div[style*="display: flex"],
+            .studio-logos-container > div,
             .studio-logos-container > a {
-                background: #ffffff !important;           /* Чисто белый */
-                background-color: #ffffff !important;     /* Дублируем */
-                opacity: 1 !important;                    /* Убираем прозрачность */
-                filter: none !important;                  /* Убираем затемнение Lampa */
-                border: 3px solid #0022ff !important;     /* Четкая синяя рамка */
-                box-shadow: none !important;
-                overflow: hidden !important;
+                /* Принудительно выжигаем белый фон */
+                background: #ffffff !important; 
+                background-color: #ffffff !important;
+                background-image: none !important;
+                
+                /* Убираем любые системные фильтры и прозрачность */
+                filter: none !important;
+                opacity: 1 !important;
+                -webkit-filter: none !important;
+                
+                /* Настраиваем рамку (темно-синяя) */
+                border: 3px solid #0011aa !important;
+                box-sizing: border-box !important;
+                border-radius: 12px !important;
             }
 
-            /* Делаем сами логотипы черными, чтобы они не исчезли на белом */
+            /* Делаем логотипы (Lionsgate и др.) радикально черными */
             .studio-logos-container img, 
             .studio-logos-container svg {
-                filter: brightness(0) !important;         /* Логотип становится черным */
+                filter: brightness(0) !important;
+                -webkit-filter: brightness(0) !important;
                 opacity: 1 !important;
+                display: block !important;
                 visibility: visible !important;
             }
 
-            /* Убираем наложение цвета при фокусе, чтобы не темнело */
-            .studio-logos-container > div.focus, 
-            .studio-logos-container > a.focus {
-                background: #f0f5ff !important;           /* Очень светло-голубой при выборе */
-                border-color: #00a2ff !important;         /* Яркая рамка при выборе */
+            /* Если там просто текст вместо логотипа */
+            .studio-logos-container span,
+            .studio-logos-container .selectbox__item-title {
+                color: #000000 !important;
+                font-weight: bold !important;
             }
         </style>
     `;
 
-    // Добавляем стили в систему
+    // Удаляем все старые попытки и ставим новую
+    $('#lampa-white-logos, #lampa-extreme-white').remove();
     $('head').append(style);
 
-    // Скрипт-контролер: каждые 300мс проверяет, не наложила ли Lampa свои стили обратно
-    setInterval(function() {
-        var items = $('.studio-logos-container > div, .studio-logos-container > a');
-        if (items.length) {
-            items.css({
-                'background-color': '#ffffff',
-                'filter': 'none',
-                'opacity': '1'
-            });
-            items.find('img, svg').css('filter', 'brightness(0)');
-        }
-    }, 300);
+    // Дополнительный "пинок" через JS для инлайновых стилей
+    function forceWhite() {
+        $('.studio-logos-container').find('div, a').each(function() {
+            this.style.setProperty('background', '#ffffff', 'important');
+            this.style.setProperty('background-color', '#ffffff', 'important');
+            this.style.setProperty('filter', 'none', 'important');
+            this.style.setProperty('opacity', '1', 'important');
+        });
+    }
 
-    console.log('Lampa White Logos Plugin: Force Active');
+    // Запускаем проверку часто, чтобы Lampa не успела перекрасить обратно
+    setInterval(forceWhite, 200);
+
+    console.log('Lampa Extreme White: Applied');
 })();
