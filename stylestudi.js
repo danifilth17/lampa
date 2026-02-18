@@ -2,62 +2,57 @@
     'use strict';
 
     var style = `
-        <style id="lampa-extreme-white">
-            /* Находим конкретно те элементы, которые мы видели на скриншотах кода */
-            .studio-logos-container div[style*="display: flex"],
-            .studio-logos-container > div,
+        <style id="lampa-white-transparent">
+            /* Основной стиль кнопок */
+            .studio-logos-container > div, 
             .studio-logos-container > a {
-                /* Принудительно выжигаем белый фон */
-                background: #ffffff !important; 
-                background-color: #ffffff !important;
+                /* Белый фон с прозрачностью 80% */
+                background: rgba(255, 255, 255, 0.8) !important; 
+                background-color: rgba(255, 255, 255, 0.8) !important;
                 background-image: none !important;
                 
-                /* Убираем любые системные фильтры и прозрачность */
+                /* Сброс фильтров Lampa */
                 filter: none !important;
                 opacity: 1 !important;
-                -webkit-filter: none !important;
                 
-                /* Настраиваем рамку (темно-синяя) */
-                border: 3px solid #0011aa !important;
-                box-sizing: border-box !important;
+                /* Синяя окантовка */
+                border: 3px solid #0022cc !important;
                 border-radius: 12px !important;
+                box-sizing: border-box !important;
+                transition: all 0.2s ease;
             }
 
-            /* Делаем логотипы (Lionsgate и др.) радикально черными */
+            /* Логотипы оставляем черными и четкими */
             .studio-logos-container img, 
             .studio-logos-container svg {
                 filter: brightness(0) !important;
-                -webkit-filter: brightness(0) !important;
                 opacity: 1 !important;
                 display: block !important;
-                visibility: visible !important;
             }
 
-            /* Если там просто текст вместо логотипа */
-            .studio-logos-container span,
-            .studio-logos-container .selectbox__item-title {
-                color: #000000 !important;
-                font-weight: bold !important;
+            /* Эффект при наведении/фокусе (делаем чуть светлее или меняем рамку) */
+            .studio-logos-container > div.focus, 
+            .studio-logos-container > a.focus {
+                background: rgba(255, 255, 255, 0.95) !important; /* Почти непрозрачный при фокусе */
+                border-color: #00a2ff !important;
+                transform: scale(1.03);
             }
         </style>
     `;
 
-    // Удаляем все старые попытки и ставим новую
-    $('#lampa-white-logos, #lampa-extreme-white').remove();
-    $('head').append(style);
+    // Очищаем старые стили и вешаем новый
+    $('[id^="lampa-"]').not('#lampa-white-transparent').remove();
+    if (!$('#lampa-white-transparent').length) $('head').append(style);
 
-    // Дополнительный "пинок" через JS для инлайновых стилей
-    function forceWhite() {
+    // Поддержка динамического обновления (как в прошлом шаге)
+    function applyTransparency() {
         $('.studio-logos-container').find('div, a').each(function() {
-            this.style.setProperty('background', '#ffffff', 'important');
-            this.style.setProperty('background-color', '#ffffff', 'important');
+            this.style.setProperty('background', 'rgba(255, 255, 255, 0.8)', 'important');
             this.style.setProperty('filter', 'none', 'important');
-            this.style.setProperty('opacity', '1', 'important');
         });
     }
 
-    // Запускаем проверку часто, чтобы Lampa не успела перекрасить обратно
-    setInterval(forceWhite, 200);
+    setInterval(applyTransparency, 300);
 
-    console.log('Lampa Extreme White: Applied');
+    console.log('Lampa White Transparent: Loaded');
 })();
