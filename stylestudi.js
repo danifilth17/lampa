@@ -1,37 +1,39 @@
 (function () {
     'use strict';
 
-    // Создаем стиль
     var style = `
-        <style id="custom-studio-logos">
+        <style id="custom-studio-logos-v2">
+            /* Нацеливаемся точно на div и ссылки внутри контейнера */
             .studio-logos-container > div, 
-            .studio-logos-container > a {
-                background-color: rgba(255, 255, 255, 0.8) !important; /* Светлее на 80% и белый */
-                border: 2px solid #1a2a6c !important;                /* Темная окантовка ближе к синему */
-                border-radius: 10px !important;                       /* Скругление как на скрине */
-                transition: all 0.3s ease;
+            .studio-logos-container > a,
+            div[class*="studio-logos-container"] > div {
+                background: #ffffff !important;             /* Чисто белый фон */
+                background-color: #ffffff !important;       /* Дублируем для верности */
+                opacity: 1 !important;                      /* Убираем возможную прозрачность */
+                border: 2px solid #001f66 !important;       /* Насыщенный темно-синий */
+                box-sizing: border-box !important;
             }
 
-            /* Эффект при наведении или фокусе */
-            .studio-logos-container > div:hover, 
+            /* Если внутри есть картинки, делаем их темными, чтобы они не слились с белым фоном */
+            .studio-logos-container img,
+            .studio-logos-container svg,
+            .studio-logos-container .selectbox__item-title {
+                filter: invert(1) brightness(0.2) !important; 
+            }
+
+            /* Стиль при наведении (фокусе) */
             .studio-logos-container > div.focus,
-            .studio-logos-container > a:hover, 
             .studio-logos-container > a.focus {
-                background-color: #ffffff !important;                 /* Чисто белый при фокусе */
-                border-color: #0044ff !important;                     /* Ярко-синий при фокусе */
-                transform: scale(1.05);
-            }
-
-            /* Чтобы логотипы внутри (черные) были лучше видны на белом фоне */
-            .studio-logos-container img, 
-            .studio-logos-container svg {
-                filter: brightness(0.2); /* Делаем логотипы темнее, если они были белыми */
+                background: #e6eeff !important;             /* Светло-голубой при фокусе */
+                border-color: #0044ff !important;
+                transform: scale(1.02);
             }
         </style>
     `;
 
-    // Добавляем стили в head
+    // Удаляем старый стиль, если он был, и вешаем новый
+    $('#custom-studio-logos').remove();
     $('head').append(style);
 
-    console.log('Plugin Custom Studio Logos: Loaded');
+    console.log('Plugin Custom Studio Logos V2: Loaded');
 })();
