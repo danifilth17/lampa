@@ -1,43 +1,55 @@
 (function () {
     'use strict';
 
+    // 1. Внедряем агрессивный CSS
     var style = `
-        <style id="custom-studio-logos-final">
-            /* Находим контейнер и все его элементы */
+        <style id="custom-studio-fix">
             .studio-logos-container > div, 
             .studio-logos-container > a {
-                background: #ffffff !important;         /* Чисто белый фон */
-                opacity: 1 !important;                  /* Убираем прозрачность */
-                filter: none !important;                /* Сбрасываем системные фильтры Lampa */
-                border: 2px solid #0022cc !important;   /* Четкая синяя рамка */
+                background-color: #ffffff !important;
+                background-image: none !important;
+                opacity: 1 !important;
+                filter: none !important;
+                border: 2px solid #0033ff !important;
                 box-shadow: none !important;
-                display: flex !important;
-                align-items: center;
-                justify-content: center;
             }
 
-            /* Делаем картинки внутри черными, чтобы они были четко видны */
+            /* Делаем логотипы внутри черными, чтобы их было видно */
             .studio-logos-container img, 
             .studio-logos-container svg {
-                filter: brightness(0) !important;       /* Логотип становится полностью черным */
+                filter: brightness(0) contrast(2) !important;
                 opacity: 1 !important;
-                max-height: 80% !important;
+                visibility: visible !important;
+                display: block !important;
             }
 
-            /* Состояние при наведении/фокусе */
-            .studio-logos-container > div.focus, 
-            .studio-logos-container > a.focus {
-                background: #ffffff !important;
-                border-color: #0055ff !important;       /* Ярче синий при выборе */
-                box-shadow: 0 0 10px rgba(0, 85, 255, 0.5) !important;
-                transform: scale(1.05);
+            /* Текст, если он есть */
+            .studio-logos-container .selectbox__item-title {
+                color: #000 !important;
+                opacity: 1 !important;
             }
         </style>
     `;
 
-    // Очистка и установка
-    $('#custom-studio-logos-v2, #custom-studio-logos-final').remove();
     $('head').append(style);
 
-    console.log('Plugin Studio Logos: Final White Version Loaded');
+    // 2. Функция для "лечения" элементов в реальном времени
+    function fixLogos() {
+        $('.studio-logos-container > div, .studio-logos-container > a').each(function() {
+            $(this).css({
+                'background': '#ffffff',
+                'opacity': '1',
+                'filter': 'none'
+            });
+            $(this).find('img, svg').css({
+                'filter': 'brightness(0)',
+                'opacity': '1'
+            });
+        });
+    }
+
+    // Запускаем проверку каждые полсекунды (на случай подгрузки новых студий)
+    setInterval(fixLogos, 500);
+
+    console.log('Lampa Studio Fix: Active');
 })();
