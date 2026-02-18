@@ -2,14 +2,14 @@
     'use strict';
 
     var style = `
-        <style id="lampa-big-white-logos">
-            /* Увеличиваем контейнер и сами кнопки */
+        <style id="lampa-balanced-logos">
+            /* Сбалансированный размер: высота 55px */
             .studio-logos-container > div, 
             .studio-logos-container > a {
-                height: 65px !important;                 /* Увеличено на ~30% */
-                min-width: 130px !important;             /* Пропорционально шире */
-                padding: 0 20px !important;
-                margin: 10px !important;                 /* Больше места между кнопками */
+                height: 55px !important;                 /* Оптимальная высота */
+                min-width: 110px !important;             /* Пропорциональная ширина */
+                padding: 0 15px !important;
+                margin: 8px !important;                  /* Умеренные отступы */
                 
                 background: rgba(255, 255, 255, 0.8) !important; 
                 background-color: rgba(255, 255, 255, 0.8) !important;
@@ -18,8 +18,8 @@
                 filter: none !important;
                 opacity: 1 !important;
                 
-                border: 3px solid #0022cc !important;
-                border-radius: 15px !important;          /* Чуть больше скругление для размера */
+                border: 2.5px solid #0022cc !important;  /* Чуть тоньше линия для меньшего размера */
+                border-radius: 10px !important;
                 box-sizing: border-box !important;
                 display: flex !important;
                 align-items: center !important;
@@ -27,10 +27,10 @@
                 transition: all 0.2s ease;
             }
 
-            /* Увеличиваем логотипы внутри */
+            /* Логотипы внутри */
             .studio-logos-container img, 
             .studio-logos-container svg {
-                height: 40px !important;                 /* Увеличен размер самого лого */
+                height: 32px !important;                 /* Пропорционально уменьшен логотип */
                 width: auto !important;
                 filter: brightness(0) !important;
                 opacity: 1 !important;
@@ -41,25 +41,25 @@
             .studio-logos-container > a.focus {
                 background: rgba(255, 255, 255, 0.95) !important;
                 border-color: #00a2ff !important;
-                transform: scale(1.1) !important;        /* Больше акцент при наведении */
+                transform: scale(1.07) !important;        /* Акцент при наведении чуть спокойнее */
             }
         </style>
     `;
 
-    // Очистка старых стилей
+    // Очистка предыдущих версий
     $('[id^="lampa-"]').remove();
     $('head').append(style);
 
-    // Принудительная фиксация размеров через JS
-    function applySize() {
+    // Функция контроля
+    function fixLayout() {
         $('.studio-logos-container').find('div, a').each(function() {
-            this.style.setProperty('height', '65px', 'important');
+            this.style.setProperty('height', '55px', 'important');
             this.style.setProperty('background', 'rgba(255, 255, 255, 0.8)', 'important');
             this.style.setProperty('filter', 'none', 'important');
         });
     }
 
-    setInterval(applySize, 300);
+    setInterval(fixLayout, 300);
 
-    console.log('Lampa Big White Logos: 130% Size Loaded');
+    console.log('Lampa Balanced Logos: Loaded');
 })();
