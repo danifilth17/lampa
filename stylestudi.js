@@ -2,38 +2,42 @@
     'use strict';
 
     var style = `
-        <style id="custom-studio-logos-v2">
-            /* Нацеливаемся точно на div и ссылки внутри контейнера */
+        <style id="custom-studio-logos-final">
+            /* Находим контейнер и все его элементы */
             .studio-logos-container > div, 
-            .studio-logos-container > a,
-            div[class*="studio-logos-container"] > div {
-                background: #ffffff !important;             /* Чисто белый фон */
-                background-color: #ffffff !important;       /* Дублируем для верности */
-                opacity: 1 !important;                      /* Убираем возможную прозрачность */
-                border: 2px solid #001f66 !important;       /* Насыщенный темно-синий */
-                box-sizing: border-box !important;
+            .studio-logos-container > a {
+                background: #ffffff !important;         /* Чисто белый фон */
+                opacity: 1 !important;                  /* Убираем прозрачность */
+                filter: none !important;                /* Сбрасываем системные фильтры Lampa */
+                border: 2px solid #0022cc !important;   /* Четкая синяя рамка */
+                box-shadow: none !important;
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
             }
 
-            /* Если внутри есть картинки, делаем их темными, чтобы они не слились с белым фоном */
-            .studio-logos-container img,
-            .studio-logos-container svg,
-            .studio-logos-container .selectbox__item-title {
-                filter: invert(1) brightness(0.2) !important; 
+            /* Делаем картинки внутри черными, чтобы они были четко видны */
+            .studio-logos-container img, 
+            .studio-logos-container svg {
+                filter: brightness(0) !important;       /* Логотип становится полностью черным */
+                opacity: 1 !important;
+                max-height: 80% !important;
             }
 
-            /* Стиль при наведении (фокусе) */
-            .studio-logos-container > div.focus,
+            /* Состояние при наведении/фокусе */
+            .studio-logos-container > div.focus, 
             .studio-logos-container > a.focus {
-                background: #e6eeff !important;             /* Светло-голубой при фокусе */
-                border-color: #0044ff !important;
-                transform: scale(1.02);
+                background: #ffffff !important;
+                border-color: #0055ff !important;       /* Ярче синий при выборе */
+                box-shadow: 0 0 10px rgba(0, 85, 255, 0.5) !important;
+                transform: scale(1.05);
             }
         </style>
     `;
 
-    // Удаляем старый стиль, если он был, и вешаем новый
-    $('#custom-studio-logos').remove();
+    // Очистка и установка
+    $('#custom-studio-logos-v2, #custom-studio-logos-final').remove();
     $('head').append(style);
 
-    console.log('Plugin Custom Studio Logos V2: Loaded');
+    console.log('Plugin Studio Logos: Final White Version Loaded');
 })();
