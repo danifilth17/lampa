@@ -1,58 +1,63 @@
 (function () {
-    'use strict';
-
     var style = `
-        <style id="lampa-white-transparent">
-            /* Основной стиль кнопок */
-            .studio-logos-container > div, 
-            .studio-logos-container > a {
-                /* Белый фон с прозрачностью 80% */
-                background: rgba(255, 255, 255, 0.8) !important; 
-                background-color: rgba(255, 255, 255, 0.8) !important;
-                background-image: none !important;
-                
-                /* Сброс фильтров Lampa */
-                filter: none !important;
-                opacity: 1 !important;
-                
-                /* Синяя окантовка */
-                border: 3px solid #0022cc !important;
-                border-radius: 12px !important;
-                box-sizing: border-box !important;
-                transition: all 0.2s ease;
+        <style>
+            /* Сброс стандартных стилей рамок и отступов */
+            .full-start__rate {
+                border: none !important;
+                background: rgba(255, 255, 255, 0.1); /* Полупрозрачный фон как у иконок */
+                border-radius: 0.3em;
+                padding: 0.2em 0.5em;
+                margin-right: 0.5em;
+                display: inline-flex;
+                align-items: center;
+                height: 1.8em;
+                font-weight: bold;
+                font-size: 1.1em;
             }
 
-            /* Логотипы оставляем черными и четкими */
-            .studio-logos-container img, 
-            .studio-logos-container svg {
-                filter: brightness(0) !important;
-                opacity: 1 !important;
-                display: block !important;
+            /* Текст (названия: TMDB, LAMPA, CUB) делаем белым, как в иконках качества */
+            .full-start__rate span, 
+            .full-start__rate::after {
+                color: #fff !important;
+                margin-left: 0.4em;
+                text-transform: uppercase;
+                font-size: 0.8em;
+                opacity: 0.9;
             }
 
-            /* Эффект при наведении/фокусе (делаем чуть светлее или меняем рамку) */
-            .studio-logos-container > div.focus, 
-            .studio-logos-container > a.focus {
-                background: rgba(255, 255, 255, 0.95) !important; /* Почти непрозрачный при фокусе */
-                border-color: #00a2ff !important;
-                transform: scale(1.03);
+            /* Если внутри есть иконка (огонек CUB) */
+            .full-start__rate img {
+                height: 1em;
+                margin-left: 0.3em;
             }
         </style>
     `;
 
-    // Очищаем старые стили и вешаем новый
-    $('[id^="lampa-"]').not('#lampa-white-transparent').remove();
-    if (!$('#lampa-white-transparent').length) $('head').append(style);
-
-    // Поддержка динамического обновления (как в прошлом шаге)
-    function applyTransparency() {
-        $('.studio-logos-container').find('div, a').each(function() {
-            this.style.setProperty('background', 'rgba(255, 255, 255, 0.8)', 'important');
-            this.style.setProperty('filter', 'none', 'important');
+    function init() {
+        $('body').append(style);
+        
+        // Слушаем событие открытия полной карточки
+        Lampa.Listener.follow('full', function (e) {
+            if (e.type === 'complite') {
+                var container = e.object.render();
+                
+                // Находим все блоки оценок
+                container.find('.full-start__rate').each(function() {
+                    var $this = $(this);
+                    
+                    // Убираем inline-стили границ, которые мешают
+                    $this.css('border', '');
+                    
+                    // Цвета цифр сохранятся автоматически, так как они прописаны 
+                    // через 'color' в атрибуте style (видно на ваших скриншотах),
+                    // а наш CSS меняет только border и фон.
+                });
+            }
         });
     }
 
-    setInterval(applyTransparency, 300);
-
-    console.log('Lampa White Transparent: Loaded');
+    if (window.appready) init();
+    else Lampa.Events.on('app', function (name) {
+        if (name === 'ready') init();
+    });
 })();
