@@ -1,63 +1,70 @@
 (function () {
-    var style = `
-        <style>
-            /* Сброс стандартных стилей рамок и отступов */
-            .full-start__rate {
-                border: none !important;
-                background: rgba(255, 255, 255, 0.1); /* Полупрозрачный фон как у иконок */
-                border-radius: 0.3em;
-                padding: 0.2em 0.5em;
-                margin-right: 0.5em;
-                display: inline-flex;
-                align-items: center;
-                height: 1.8em;
-                font-weight: bold;
-                font-size: 1.1em;
-            }
-
-            /* Текст (названия: TMDB, LAMPA, CUB) делаем белым, как в иконках качества */
-            .full-start__rate span, 
-            .full-start__rate::after {
-                color: #fff !important;
-                margin-left: 0.4em;
-                text-transform: uppercase;
-                font-size: 0.8em;
-                opacity: 0.9;
-            }
-
-            /* Если внутри есть иконка (огонек CUB) */
-            .full-start__rate img {
-                height: 1em;
-                margin-left: 0.3em;
-            }
-        </style>
-    `;
-
     function init() {
+        var style = `
+            <style>
+                /* Контейнер оценки делаем похожим на плашку качества */
+                .full-start__rate {
+                    background: rgba(255, 255, 255, 0.08) !important;
+                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                    border-radius: 6px !important;
+                    padding: 2px 8px !important;
+                    margin-right: 8px !important;
+                    display: inline-flex !important;
+                    align-items: center !important;
+                    height: 32px !important;
+                    box-sizing: border-box !important;
+                    font-size: 16px !important;
+                }
+
+                /* Текст подписей (TMDB, LAMPA, CUB) делаем белым и уменьшаем */
+                .full-start__rate::after, 
+                .full-start__rate span:not([style*="color"]) {
+                    color: #fff !important;
+                    margin-left: 5px;
+                    font-size: 0.75em;
+                    font-weight: bold;
+                    opacity: 0.8;
+                }
+
+                /* Иконка огонька в CUB */
+                .full-start__rate img {
+                    width: 16px;
+                    height: 16px;
+                    margin: 0 4px;
+                }
+            </style>
+        `;
+
         $('body').append(style);
-        
-        // Слушаем событие открытия полной карточки
+
+        // Функция очистки лишних стилей, которые мешают плашкам
+        function patchRates() {
+            $('.full-start__rate').each(function() {
+                // Удаляем inline-границу, но оставляем цвет текста (оценки)
+                $(this).css({
+                    'border': '',
+                    'border-color': ''
+                });
+            });
+        }
+
+        // Подписываемся на события Lampa
         Lampa.Listener.follow('full', function (e) {
             if (e.type === 'complite') {
-                var container = e.object.render();
-                
-                // Находим все блоки оценок
-                container.find('.full-start__rate').each(function() {
-                    var $this = $(this);
-                    
-                    // Убираем inline-стили границ, которые мешают
-                    $this.css('border', '');
-                    
-                    // Цвета цифр сохранятся автоматически, так как они прописаны 
-                    // через 'color' в атрибуте style (видно на ваших скриншотах),
-                    // а наш CSS меняет только border и фон.
-                });
+                setTimeout(patchRates, 10); // Небольшая задержка для рендера
             }
         });
     }
 
-    if (window.appready) init();
-    else Lampa.Events.on('app', function (name) {
-        if (name === 'ready') init();
-    });
+    // Безопасный запуск
+    try {
+        if (window.appready) init();
+        else {
+            Lampa.Events.on('app', function (name) {
+                if (name === 'ready') init();
+            });
+        }
+    } catch (e) {
+        console.log('Plugin Rate Style Error:', e);
+    }
 })();
