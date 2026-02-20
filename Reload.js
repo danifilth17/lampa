@@ -1,72 +1,81 @@
 (function () {
     'use strict';
 
-    function rebootPlugin() {
-        // Добавляем параметр в настройки интерфейса
+    function initRebootPlugin() {
+        // 1. Добавляем переключатель в настройки Интерфейса
         Lampa.Settings.listener.follow('open', function (e) {
             if (e.name == 'interface') {
+                // Ждем отрисовки списка настроек
                 setTimeout(function () {
-                    var field = $(`
-                        <div class="settings-param selector" data-name="reboot_button" data-type="toggle">
-                            <div class="settings-param__name">Кнопка перезагрузки</div>
-                            <div class="settings-param__value"></div>
-                            <div class="settings-param__descr">Показывать кнопку быстрой перезагрузки в меню</div>
-                        </div>
-                    `);
+                    var menu = $('.settings-list', e.render);
+                    
+                    // Проверяем, не добавлена ли уже кнопка (чтобы не дублировать)
+                    if (menu.length && !menu.find('[data-name="reboot_button"]').length) {
+                        var item = $(`
+                            <div class="settings-param selector" data-name="reboot_button" data-type="toggle">
+                                <div class="settings-param__name">Кнопка перезагрузки</div>
+                                <div class="settings-param__value"></div>
+                                <div class="settings-param__descr">Отображать иконку быстрой перезагрузки в верхней панели</div>
+                            </div>
+                        `);
 
-                    field.on('hover:enter', function () {
-                        var status = Lampa.Storage.field('reboot_button');
-                        Lampa.Storage.set('reboot_button', !status);
-                        Lampa.Settings.update();
-                    });
+                        item.on('hover:enter', function () {
+                            var status = Lampa.Storage.field('reboot_button');
+                            Lampa.Storage.set('reboot_button', !status);
+                            Lampa.Settings.update();
+                        });
 
-                    $('.settings-list', e.render).append(field);
-                    Lampa.Settings.update();
-                }, 10);
+                        menu.append(item);
+                        Lampa.Settings.update(); // Обновляем визуальное состояние toggle
+                    }
+                }, 50);
             }
         });
 
-        // Функция отрисовки кнопки перезагрузки
-        function addRebootButton() {
+        // 2. Логика отображения кнопки перезагрузки
+        function renderButton() {
+            // Удаляем старую кнопку если она есть
+            $('.head__reboot-plugin').remove();
+
             if (Lampa.Storage.field('reboot_button')) {
-                var active = Lampa.Activity.active();
-                var render = active.activity.render();
-                
-                // Ищем место для вставки (например, рядом с меню или в шапке)
-                // В tricks.js используется модификация существующих элементов:
-                var reboot_btn = $(`
-                    <div class="head__action head__reboot selector">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 4V1L8 5L12 9V6C15.31 6 18 8.69 18 12C18 13.01 17.75 13.97 17.3 14.8L18.76 16.26C19.54 15.03 20 13.57 20 12C20 7.58 16.42 4 12 4ZM12 18C8.69 18 6 15.31 6 12C6 10.99 6.25 10.03 6.7 9.2L5.24 7.74C4.46 8.97 4 10.43 4 12C4 16.42 7.58 20 12 20V23L16 19L12 15V18Z" fill="currentColor"/>
-                        </svg>
-                    </div>
-                `);
+                var head = $('.head .head__actions');
+                if (head.length) {
+                    var btn = $(`
+                        <div class="head__action head__reboot-plugin selector">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle;">
+                                <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" fill="currentColor"/>
+                            </svg>
+                        </div>
+                    `);
 
-                reboot_btn.on('hover:enter', function () {
-                    window.location.reload();
-                });
+                    btn.on('hover:enter', function () {
+                        window.location.reload();
+                    });
 
-                // Добавляем кнопку в шапку, если её там еще нет
-                if (!$('.head__reboot', render).length) {
-                    $('.head__actions', render).prepend(reboot_btn);
+                    head.prepend(btn);
                 }
             }
         }
 
-        // Следим за сменой активности для перерисовки кнопки
+        // Следим за активностью и изменениями настроек для отрисовки кнопки
         Lampa.Activity.listener.follow('app', function (e) {
-            if (e.type == 'active') {
-                addRebootButton();
-            }
+            if (e.type == 'active') renderButton();
         });
+
+        Lampa.Storage.listener.follow('change', function (e) {
+            if (e.name == 'reboot_button') renderButton();
+        });
+        
+        // Первичный запуск
+        renderButton();
     }
 
-    // Регистрация плагина
+    // Регистрация плагина при готовности системы
     if (window.appready) {
-        rebootPlugin();
+        initRebootPlugin();
     } else {
         Lampa.Listener.follow('app', function (e) {
-            if (e.type == 'ready') rebootPlugin();
+            if (e.type == 'ready') initRebootPlugin();
         });
     }
 })();
