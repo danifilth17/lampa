@@ -9,7 +9,7 @@
                     <div class="settings-param selector" data-type="toggle" data-name="hide_extra_info">
                         <div class="settings-param__name">Скрыть лишние элементы</div>
                         <div class="settings-param__value"></div>
-                        <div class="settings-param__descr">Скрывает рейтинги (IMDB, KP) и оригинальное название</div>
+                        <div class="settings-param__descr">Скрывает рейтинги, оригинальное название, статус и возрастное ограничение</div>
                     </div>
                 `);
 
@@ -40,18 +40,21 @@
                 if (!styleElement) {
                     styleElement = document.createElement('style');
                     styleElement.id = styleId;
-                    // Добавлен селектор .rate--kp из вашего скриншота
+                    // Добавлены селекторы .full-start__status и .full-start__pg
                     styleElement.innerHTML = `
                         .full-start__rate.rate--imdb, 
                         .full-start__rate.rate--kp,
-                        .full-start__title-original {
+                        .full-start__title-original,
+                        .full-start__status,
+                        .full-start__pg {
                             display: none !important;
                         }
                     `;
                     document.body.appendChild(styleElement);
                 }
             } else {
-                if (styleElement) styleElement.remove();
+                var currentStyle = document.getElementById(styleId);
+                if (currentStyle) currentStyle.remove();
             }
         }
 
