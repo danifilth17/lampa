@@ -6,23 +6,21 @@
         var scroll  = new Lampa.Scroll({mask: true, over: true});
         var items   = [];
         var html    = $('<div class="category-full"></div>');
-        var body    = $('<div class="category-full__body"></div>');
         
         this.create = function () {
             var _this = this;
 
-            // Используем стандартный API адрес Filmix для получения последних обновлений
-            // Примечание: Для работы в браузере может потребоваться прокси
+            // Используем публичный API Filmix (может потребоваться зеркало или прокси)
             var url = 'https://filmix.my/api/v2/last_updates?count=30';
 
             network.silent(url, function (data) {
                 if (data && data.length) {
                     _this.build(data);
                 } else {
-                    Lampa.Noty.show('Не удалось получить данные с Filmix');
+                    _this.empty();
                 }
             }, function () {
-                Lampa.Noty.show('Ошибка сети при запросе к Filmix');
+                Lampa.Noty.show('Ошибка доступа к Filmix. Проверьте сеть или прокси.');
             });
 
             return scroll.render();
@@ -30,47 +28,64 @@
 
         this.build = function (data) {
             var _this = this;
-            
+            var container = $('<div class="card--grid"></div>');
+
             data.forEach(function (item) {
-                // Создаем карточку в стиле Lampa
-                var card = Lampa.Template.get('card', {
+                // Создаем объект данных для карточки
+                var cardData = {
+                    id: item.id,
                     title: item.title || item.original_title,
-                    release_year: item.year
-                });
+                    release_year: item.year,
+                    img: item.poster || item.image
+                };
 
-                // Подгружаем постер
-                var img = card.find('img')[0];
-                if (item.poster) img.src = item.poster;
-
+                var card = Lampa.Template.get('card', cardData);
+                
+                // Обработка клика
                 card.on('hover:enter', function () {
-                    // Открываем стандартное окно описания Lampa по ID
                     Lampa.Activity.push({
                         url: '',
-                        title: item.title,
+                        title: cardData.title,
                         component: 'full',
-                        id: item.id,
+                        id: cardData.id,
                         method: 'movie',
+                        card: cardData,
                         source: 'filmix'
                     });
                 });
 
-                body.append(card);
+                container.append(card);
+                items.push(card);
             });
 
-            html.append(body);
+            html.append(container);
+            scroll.append(html);
+            
+            // Сообщаем Lampa, что контент готов для навигации пультом
+            Lampa.Controller.enable('content');
+        };
+
+        this.empty = function () {
+            html.append('<div class="empty">Данные не найдены</div>');
             scroll.append(html);
         };
     }
 
     function startPlugin() {
-        // Регистрация компонента
         Lampa.Component.add('filmix_releases', FilmixReleases);
 
-        // Добавление в боковое меню
         var menu_item = {
             title: 'Filmix Релизы',
-            id: 'filmix',
-            icon: '<svg height="36" viewBox="0 0 24 24" width="36" xmlns="http://www.w3.org/2000/svg"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4h-2l2 4H9l-2-4H5l2 4H5c-1.1 0-1.99.9-1.99 2L3 18c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4h-3z" fill="white"/></svg>'
+            id: 'filmix_rel',
+            icon: '<svg height="36" viewBox="0 0 24 24" width="36" xmlns="http://www.w3.org/2000/svg"><path d="M21 7L9 19L3.5 13.5L4.91 12.09L9 16.17L19.59 5.59L21 7Z" fill="white"/></svg>',
+            onSelect: function () {
+                Lampa.Activity.push({
+                    url: '',
+                    title: 'Релизы Filmix',
+                    component: 'filmix_releases',
+                    page: 1
+                });
+            }
         };
 
         Lampa.Menu.add(menu_item);
