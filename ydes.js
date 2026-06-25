@@ -649,6 +649,12 @@
                 position: absolute; bottom: 0; left: 0; width: 100%; height: 55%;
                 pointer-events: none;
             }
+			
+			.ydesign-gradient-layer, 
+            .ydesign-content-layer {
+             background: none !important;
+             background-image: none !important;
+            }
 
             .ydesign-content-layer {
                 position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
@@ -1404,14 +1410,5 @@
     if (window.appready) init();
     else Lampa.Listener.follow('app', function(e) { if (e.type === 'ready') init(); });
 
-(function () {
-    var style = document.createElement('style');
-    style.innerHTML = `
-        .ydesign-gradient-layer, 
-        .ydesign-content-layer {
-            background: none !important;
-            background-image: none !important;
-        }
-    `;
-    document.head.appendChild(style);
+
 })();
