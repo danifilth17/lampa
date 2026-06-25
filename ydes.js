@@ -1,6 +1,16 @@
 (function () {
     'use strict';
 
+	   /* --- НАШ ВСТАВЛЕНИЙ БЛОК СТИЛІВ --- */
+    var customStyles = document.createElement('style');
+    customStyles.innerHTML = `
+        .time-line::after {
+            background: #8A2BE2 !important;
+        }
+    `;
+    document.head.appendChild(customStyles);
+    /* --------------------------------- */
+
     if (window.YDesignLoaded) return;
     window.YDesignLoaded = true;
 
